@@ -3,6 +3,7 @@ package Controller;
 import DomainModel.Trainer;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class TrainersController {
     private ArrayList<Trainer> trainers = new ArrayList<Trainer>();
@@ -16,7 +17,7 @@ public class TrainersController {
         String fc;
         for(Trainer tr : trainers){
             fc = tr.getFiscalCod();
-            if (fc == fiscalCod){
+            if (Objects.equals(fc, fiscalCod)){
                 trainers.remove(tr);
                 break;
             }
