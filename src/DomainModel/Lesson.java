@@ -8,6 +8,8 @@ public class Lesson {
     private ArrayList<Rider> riders = new ArrayList<Rider>();
     private Trainer trainer;
 
+    //todo aggiungi la data
+
     public Lesson(int lessonId, Arena arena, Trainer trainer) {
         this.lessonId = lessonId;
         this.arena = arena;
@@ -24,6 +26,14 @@ public class Lesson {
 
     public ArrayList<Rider> getRiders() {
         return riders;
+    }
+
+    public void addRider(Rider r){
+        riders.add(r);
+    }
+
+    public void removeRider(Rider r){
+        riders.remove(r);
     }
 
     public Trainer getTrainer() {
