@@ -1,5 +1,8 @@
 package DomainModel;
-
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Lesson {
@@ -7,13 +10,15 @@ public class Lesson {
     private Arena arena;
     private ArrayList<Rider> riders = new ArrayList<Rider>();
     private Trainer trainer;
+    LocalDate date;
+    LocalTime time;
 
-    //todo aggiungi la data
-
-    public Lesson(int lessonId, Arena arena, Trainer trainer) {
+    public Lesson(int lessonId, Arena arena, Trainer trainer, LocalDate date, LocalTime time) {
         this.lessonId = lessonId;
         this.arena = arena;
         this.trainer = trainer;
+        this.date = date;
+        this.time = time;
     }
 
     public int getLessonId() {
@@ -38,6 +43,10 @@ public class Lesson {
 
     public Trainer getTrainer() {
         return trainer;
+    }
+
+    public LocalDateTime getDateTime() {
+        return LocalDateTime.of(date, time);
     }
 
     public int getAvailableSlot (){

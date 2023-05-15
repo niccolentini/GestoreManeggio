@@ -1,28 +1,24 @@
 package DomainModel.Membership;
 
 public abstract class MembershipDecorator implements Membership {
+    protected Membership membership;
+
+    public MembershipDecorator(Membership membership) {
+        this.membership = membership;
+    }
+
     @Override
     public int getNumLessons() {
-        return 0;
+        return membership.getNumLessons();
     }
 
     @Override
     public float getPrice() {
-        return 0;
+        return membership.getPrice();
     }
 
     @Override
     public String getDescription() {
-        return null;
-    }
-
-    @Override
-    public void useLesson() {
-
-    }
-
-    @Override
-    public void earnLesson() {
-
+        return membership.getDescription();
     }
 }

@@ -11,7 +11,6 @@ public abstract class User {
         this.lastName = lastName;
     }
 
-
     public String getFiscalCod() {
         return fiscalCod;
     }

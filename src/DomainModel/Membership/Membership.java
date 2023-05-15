@@ -1,10 +1,13 @@
 package DomainModel.Membership;
 
 public interface Membership {
-
     public int getNumLessons();
+
     public float getPrice();
+
     public String getDescription();
-    public void useLesson();
-    public void earnLesson();
+
 }
+
+//todo: nel membership DAO farai un metodo per creare il tipo di membership richiesto tramite il passaggio di parole chiave
+//todo: quindi box = pacchetto box, lezioni = pacchetto lezioni , groom = pacchetto groom. Lavorerà tramite uno switch

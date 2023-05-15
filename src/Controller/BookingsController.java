@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class BookingsController {
+public class BookingsController implements Observer{
 
     public void addRiderToLesson (Rider rider, @NotNull Lesson lesson){
         lesson.addRider(rider);
@@ -23,5 +23,8 @@ public class BookingsController {
     }
 
 
-
+    @Override
+    public void update(Lesson lesson) {
+        //todo: qui dentro richiamo il membershipDAO per cancellare le associazioni rider-lezione
+    }
 }
