@@ -1,6 +1,21 @@
 package DomainModel.Membership;
 
 public class GroomPack extends MembershipDecorator{
+    private int ID;
+
+    public String getType(){
+        return "GroomPack";
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    @Override
+    public int getID() {
+        return ID;
+    }
+
     public GroomPack(Membership membership) {
         super(membership);
     }
