@@ -13,6 +13,7 @@ public class RiderDAO {
     public RiderDAO(Connection connection) {
         this.connection = connection;
     }
+    //TODO: devi dare a questo DAO il horseDAO in modo che il rider possa avere un cavallo di tipo Horse
 
     public void createRider(Rider rider) throws SQLException {
         String query = "INSERT INTO rider (fiscalCod, firstName, lastName, horse) VALUES (?, ?, ?)";
@@ -20,7 +21,7 @@ public class RiderDAO {
             statement.setString(1, rider.getFiscalCod());
             statement.setString(2, rider.getFirstName());
             statement.setString(3, rider.getLastName());
-            statement.setString(4, rider.getHorse());
+            statement.setString(4, rider.getHorse()); //TODO: qui dovrai avere getHorse.getName() e in fondo avere il collegamento al horse.dao
             statement.executeUpdate();
         }
     }

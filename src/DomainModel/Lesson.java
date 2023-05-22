@@ -49,6 +49,14 @@ public class Lesson {
         return LocalDateTime.of(date, time);
     }
 
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public LocalTime getTime() {
+        return time;
+    }
+
     public int getAvailableSlot (){
         int size = riders.size();
         return 3-size;
