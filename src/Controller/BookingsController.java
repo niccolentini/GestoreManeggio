@@ -25,6 +25,6 @@ public class BookingsController implements Observer{
 
     @Override
     public void update(Lesson lesson) {
-        //todo: qui dentro richiamo il membershipDAO per cancellare le associazioni rider-lezione
+        //TODO: qui dentro richiamo il lessonsDAO per cancellare le associazioni rider-lezione
     }
 }
