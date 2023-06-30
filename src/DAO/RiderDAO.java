@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RiderDAO {
+public class RiderDAO implements DAO<Rider, String> {
     private Connection connection;
 
     public RiderDAO(Connection connection) {
@@ -15,7 +15,7 @@ public class RiderDAO {
     }
     //TODO: devi dare a questo DAO il horseDAO in modo che il rider possa avere un cavallo di tipo Horse
 
-    public void createRider(Rider rider) throws SQLException {
+    public void add(Rider rider) throws SQLException {
         String query = "INSERT INTO rider (fiscalCod, firstName, lastName, horse) VALUES (?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, rider.getFiscalCod());
@@ -26,7 +26,8 @@ public class RiderDAO {
         }
     }
 
-    public void updateRider(Rider rider) throws SQLException {
+    @Override
+    public void update(Rider rider) throws SQLException {
         String query = "UPDATE rider SET fiscalCod = ?, firstName = ?, lastName = ?, horse = ? WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, rider.getFiscalCod());
@@ -37,7 +38,8 @@ public class RiderDAO {
         }
     }
 
-    public void deleteRider(String fisCod) throws SQLException {
+    @Override
+    public void remove(String fisCod) throws SQLException {
         String query = "DELETE FROM rider WHERE fiscalCod = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, fisCod);
@@ -45,7 +47,7 @@ public class RiderDAO {
         }
     }
 
-    public Rider getRiderByFisCod(String fisCod) throws SQLException {
+    public Rider get(String fisCod) throws SQLException {
         String query = "SELECT * FROM rider WHERE fiscalCod = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, fisCod);
@@ -58,11 +60,11 @@ public class RiderDAO {
         return null;
     }
 
-    public List<Rider> getAllRiders() throws SQLException {
+    public ArrayList<Rider> getAll() throws SQLException {
         String query = "SELECT * FROM rider";
         try (PreparedStatement statement = connection.prepareStatement(query);
              ResultSet resultSet = statement.executeQuery()) {
-            List<Rider> riders = new ArrayList<>();
+            ArrayList<Rider> riders = new ArrayList<>();
             while (resultSet.next()) {
                 riders.add(extractRiderFromResultSet(resultSet));
             }

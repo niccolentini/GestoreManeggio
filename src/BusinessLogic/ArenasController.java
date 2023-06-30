@@ -1,7 +1,6 @@
-package Controller;
+package BusinessLogic;
 import DomainModel.Arena;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class ArenasController {
     private ArrayList<Arena> arenas = new ArrayList<Arena>();

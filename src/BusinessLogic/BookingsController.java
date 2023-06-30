@@ -1,9 +1,8 @@
-package Controller;
+package BusinessLogic;
 
 import DomainModel.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class BookingsController implements Observer{

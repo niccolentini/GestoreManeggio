@@ -1,4 +1,4 @@
-package Controller;
+package BusinessLogic;
 
 import DomainModel.Arena;
 import DomainModel.Lesson;

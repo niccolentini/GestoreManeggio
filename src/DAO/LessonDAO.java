@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-public class LessonDAO implements DAO {
+public class LessonDAO implements DAO <Lesson, Integer> {
     private Connection connection;
 
     public LessonDAO(Connection connection) { //TODO: aggiungi nel controllore il trainerDAO e arenaDAO
@@ -15,9 +15,9 @@ public class LessonDAO implements DAO {
     }
 
     @Override
-    public void add(Object o) {
-        if (o instanceof Lesson) {
-            Lesson lesson = (Lesson) o;
+    public void add(Lesson less) throws SQLException {
+        if (less instanceof Lesson) {
+            Lesson lesson = (Lesson) less;
             try {
                 String query = "INSERT INTO lesson (lessonId, arena, trainer, date, time) VALUES (?, ?, ?, ?, ?)";
                 try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -35,7 +35,7 @@ public class LessonDAO implements DAO {
     }
 
     @Override
-    public void update(Object o) {
+    public void update(Lesson o) throws SQLException{
         if (o instanceof Lesson) {
             Lesson lesson = (Lesson) o;
             try {
@@ -55,11 +55,11 @@ public class LessonDAO implements DAO {
     }
 
     @Override
-    public void remove(int id) {
+    public void remove(Integer integer) throws Exception {
         try {
             String query = "DELETE FROM lesson WHERE lessonId = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setInt(1, id);
+                statement.setInt(1, integer);
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
@@ -68,7 +68,7 @@ public class LessonDAO implements DAO {
     }
 
     @Override
-    public Object get(int id) {
+    public Lesson get(Integer id) throws Exception {
         try {
             String query = "SELECT * FROM lesson WHERE lessonId = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -85,13 +85,15 @@ public class LessonDAO implements DAO {
         return null;
     }
 
+
+
     @Override
-    public ArrayList<Object> getAll() {
+    public ArrayList<Lesson> getAll() {
         try {
             String query = "SELECT * FROM lesson";
             try (PreparedStatement statement = connection.prepareStatement(query);
                  ResultSet resultSet = statement.executeQuery()) {
-                ArrayList<Object> lessons = new ArrayList<>();
+                ArrayList<Lesson> lessons = new ArrayList<>();
                 while (resultSet.next()) {
                     lessons.add(extractLessonFromResultSet(resultSet));
                 }
@@ -109,7 +111,7 @@ public class LessonDAO implements DAO {
         int trainer = resultSet.getInt("trainer");
         LocalDate date = resultSet.getDate("date").toLocalDate();
         LocalTime time = resultSet.getTime("time").toLocalTime();
-        return new Lesson(lessonId, arenaDAO.getArenaById(arena), trainer, date, time);
+        return new Lesson(lessonId, ArenaDAO.get(arena), trainer, date, time);
         //TODO: passa a questo DAO tramite costruttore il DAO delle arene e dei trainer in modo da poter accedere tramite il loro id agli oggetti concreti
     }
 }

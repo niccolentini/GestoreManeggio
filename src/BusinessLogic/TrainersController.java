@@ -1,4 +1,4 @@
-package Controller;
+package BusinessLogic;
 
 import DomainModel.Trainer;
 

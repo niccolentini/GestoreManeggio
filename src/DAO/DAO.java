@@ -1,11 +1,12 @@
 package DAO;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
-public interface DAO {
-    public void add(Object o);
-    public void update(Object o);
-    public void remove(int id);
-    public Object get(int id);
-    public ArrayList<Object> getAll();
+public interface DAO<T, ID>{
+    public void add(T t) throws Exception;
+    public void update(T t) throws Exception;
+    public void remove(ID id) throws Exception;
+    public T get(ID id) throws Exception;
+    public ArrayList<T> getAll() throws Exception;
 }

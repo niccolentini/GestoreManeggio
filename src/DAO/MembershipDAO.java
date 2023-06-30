@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MembershipDAO implements DAO {
+public class MembershipDAO implements DAO <Membership, Integer> {
     private Connection connection;
 
     public MembershipDAO(Connection connection) {

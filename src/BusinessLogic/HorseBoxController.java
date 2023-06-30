@@ -1,4 +1,4 @@
-package Controller;
+package BusinessLogic;
 
 import DomainModel.Horse;
 import DomainModel.HorseBox;
