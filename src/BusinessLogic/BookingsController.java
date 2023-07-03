@@ -24,12 +24,19 @@ public class BookingsController implements Observer{
         if (l == null) throw new RuntimeException("The given lesson id does not exist");
         if (r == null) throw new RuntimeException("The given rider does not exist");
 
-        if ( l.getNumRider() == l.getMaxRiders())
-            throw new RuntimeException("Prenotazione non andata a buon fine. Sono state raggiunte le prenotazioni massime per questa lezione");
+        int numLess = r.getMembership().getNumLessons();
 
-        ArrayList<Rider> riders = lessonDAO.getRidersForLesson(lessonId);
-        if (riders.contains(r))
-            throw new RuntimeException("Il rider è già iscritto a questa lezione");
+        if (numLess > 0){
+            if ( l.getNumRider() == l.getMaxRiders())
+                throw new RuntimeException("Prenotazione non andata a buon fine. Sono state raggiunte le prenotazioni massime per questa lezione");
+
+            ArrayList<Rider> riders = lessonDAO.getRidersForLesson(lessonId);
+            if (riders.contains(r))
+                throw new RuntimeException("Il rider è già iscritto a questa lezione");
+            r.getMembership().setNumLessons(numLess - 1);
+            lessonDAO.addRiderToLesson(riderFiscalCode, lessonId);
+        }
+
 
         getLessonsForRider(riderFiscalCode).forEach(lesson -> {
             if (lesson.getDate().equals(l.getDate()) && lesson.getTime().equals(l.getTime()))

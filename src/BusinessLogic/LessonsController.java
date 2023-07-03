@@ -21,7 +21,7 @@ public class LessonsController extends Subject {
         this.arenaController = arenaController;
     }
 
-    public void addLesson (int idArena, String trainerFiscalCode, LocalDate date, LocalTime time) throws Exception{
+    public void createLesson (int idArena, String trainerFiscalCode, LocalDate date, LocalTime time) throws Exception{
         Trainer trainer = trainersController.getTrainer(trainerFiscalCode);
         if(trainer == null) {
             throw new IllegalArgumentException("Trainer not found");
