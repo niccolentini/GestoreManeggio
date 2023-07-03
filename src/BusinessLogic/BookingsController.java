@@ -3,7 +3,6 @@ package BusinessLogic;
 import DAO.LessonDAO;
 import DAO.RiderDAO;
 import DomainModel.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -32,22 +31,30 @@ public class BookingsController implements Observer{
         if (riders.contains(r))
             throw new RuntimeException("Il rider è già iscritto a questa lezione");
 
+        getLessonsForRider(riderFiscalCode).forEach(lesson -> {
+            if (lesson.getDate().equals(l.getDate()) && lesson.getTime().equals(l.getTime()))
+                throw new RuntimeException("Il rider è già iscritto ad un'altra lezione in questo orario");
+        });
+
+        //TODO: controllare se l'abbonamento è valido
+
+        lessonDAO.addRiderToLesson(riderFiscalCode, lessonId);
 
     }
 
-    public void removeRiderFromLesson (Rider rider, Lesson lesson){
-        for(Rider r : lesson.getRiders()){
-            if(Objects.equals(r.getFiscalCod(), rider.getFiscalCod())){
-                lesson.removeRider(r);
-                System.out.println("Rider rimosso dalla lezione.");
-            }
-        }
-        System.out.println("Il rider inserito non è iscritto alla lezione del"); //todo aggiungi data nell'out dopo del...
+    public void removeRiderFromLesson (String fiscalCode, int lessonId) throws Exception{
+        lessonDAO.removeRiderFromLesson(fiscalCode, lessonId);
     }
+
+
+    public ArrayList<Lesson> getLessonsForRider(String riderFiscalCode) throws Exception {
+        return lessonDAO.getLessonsForRider(riderFiscalCode);
+    }
+
 
 
     @Override
     public void update(Lesson lesson) {
-        //TODO: qui dentro richiamo il lessonsDAO per cancellare le associazioni rider-lezione
+        //TODO: upddate observer
     }
 }

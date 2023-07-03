@@ -5,14 +5,14 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MembershipDAO implements DAO <Membership, Integer> {
+public class MembershipDAO{
     private Connection connection;
 
     public MembershipDAO(Connection connection) {
         this.connection = connection;
     }
 
-    @Override
+    //TODO: da rivedere
     public void add(Object o) {
         if (o instanceof Membership) {
             Membership membership = (Membership) o;
@@ -27,7 +27,7 @@ public class MembershipDAO implements DAO <Membership, Integer> {
         }
     }
 
-    @Override
+    //TODO: da rivedere
     public void update(Object o) {
         if (o instanceof Membership) {
             Membership membership = (Membership) o;
@@ -42,7 +42,7 @@ public class MembershipDAO implements DAO <Membership, Integer> {
         }
     }
 
-    @Override
+    //TODO: da rivedere
     public void remove(int id) {
         try {
             deleteMembership(id);
@@ -52,7 +52,7 @@ public class MembershipDAO implements DAO <Membership, Integer> {
         }
     }
 
-    @Override
+    //TODO: da rivedere
     public Object get(int id) {
         try {
             return getMembershipById(id);
@@ -63,7 +63,7 @@ public class MembershipDAO implements DAO <Membership, Integer> {
         return null;
     }
 
-    @Override
+    //TODO: da rivedere
     public ArrayList<Object> getAll() {
         try {
             return getAllMemberships();
@@ -73,6 +73,7 @@ public class MembershipDAO implements DAO <Membership, Integer> {
         }
         return new ArrayList<>();
     }
+
 
     private void createMembership(Membership membership) throws SQLException {
         String query = "INSERT INTO membership (id, packType) VALUES (?, ?, ?, ?)";

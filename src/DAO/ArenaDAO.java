@@ -1,6 +1,10 @@
 package DAO;
 import DomainModel.Arena;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 
 public class ArenaDAO implements DAO <Arena, Integer> {
@@ -21,7 +25,22 @@ public class ArenaDAO implements DAO <Arena, Integer> {
 
     @Override
     public Arena get(Integer id) throws Exception {
-        return null;
+        Connection connection= DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Arena arena = null;
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM arenas WHERE arenaId = ?");
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+        if(rs.next())
+        {
+            arena = new Arena(
+                    rs.getString("name"),
+                    id);
+        }
+        rs.close();
+        ps.close();
+
+        connection.close();
+        return arena;
     }
 
     @Override

@@ -13,13 +13,17 @@ public class LessonDAO implements DAO <Lesson, Integer> {
     private Connection connection;
     ArenaDAO arenaDAO;
     RiderDAO riderDAO;
+    TrainerDAO trainerDAO;
 
-    public LessonDAO(Connection connection, ArenaDAO arenaDao, RiderDAO riderDAO) { //TODO: aggiungi nel controllore il trainerDAO e arenaDAO
+    public LessonDAO(Connection connection, ArenaDAO arenaDao, RiderDAO riderDAO, TrainerDAO trainerDAO) { //TODO: aggiungi nel controllore il trainerDAO e arenaDAO
         this.connection = connection;
         this.arenaDAO = arenaDao;
         this.riderDAO = riderDAO;
+        this.trainerDAO = trainerDAO;
     }
 
+
+    //TODO: da rivedere
     @Override
     public void add(Lesson less) throws SQLException {
         if (less instanceof Lesson) {
@@ -40,6 +44,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
         }
     }
 
+    //TODO: da rivedere
     @Override
     public void update(Lesson o) throws SQLException{
         if (o instanceof Lesson) {
@@ -60,6 +65,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
         }
     }
 
+    //TODO: da rivedere
     @Override
     public void remove(Integer integer) throws Exception {
         try {
@@ -73,6 +79,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
         }
     }
 
+    //TODO: da rivedere
     @Override
     public Lesson get(Integer id) throws Exception {
         try {
@@ -92,7 +99,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
     }
 
 
-
+    //TODO: da rivedere
     @Override
     public ArrayList<Lesson> getAll() throws Exception{
         try {
@@ -111,9 +118,23 @@ public class LessonDAO implements DAO <Lesson, Integer> {
         return null;
     }
 
+    //TODO: da rivedere
+    private Lesson extractLessonFromResultSet(ResultSet resultSet) throws Exception {
+        int lessonId = resultSet.getInt("lessonId");
+        int arenaId = resultSet.getInt("arenaId");
+        String trainerFiscalCode = resultSet.getString("trainer");
+        LocalDate date = resultSet.getDate("date").toLocalDate();
+        LocalTime time = resultSet.getTime("time").toLocalTime();
+
+        return new Lesson(lessonId, arenaDAO.get(arenaId), trainerDAO.get(trainerFiscalCode), date, time);
+        //fixme: passa a questo DAO tramite costruttore il DAO delle arene e dei trainer in modo da poter accedere tramite il loro id agli oggetti concreti
+    }
+
+
+
     public ArrayList<Rider> getRidersForLesson(Integer lessonId) throws Exception {
 
-        //Connection connection = Database.getConnection(); //TODO vedi andre e simo che aprono sempre la connessione e poi la chiudono. Necessaria una classe Database
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
         String query = "SELECT * FROM lesson WHERE leddonId = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setInt(1, lessonId);
@@ -122,17 +143,46 @@ public class LessonDAO implements DAO <Lesson, Integer> {
         while (resultSet.next()) riders.add(riderDAO.get(resultSet.getString("fiscalCod")));
         resultSet.close();
         statement.close();
-        //Database.closeConnection(connection);
+        connection.close();
         return riders;
     }
 
-    private Lesson extractLessonFromResultSet(ResultSet resultSet) throws Exception {
-        int lessonId = resultSet.getInt("lessonId");
-        int arenaId = resultSet.getInt("arenaId");
-        int trainer = resultSet.getInt("trainer"); //TODO: risolvere, non vuole un int vuole un trainer la Lesson
-        LocalDate date = resultSet.getDate("date").toLocalDate();
-        LocalTime time = resultSet.getTime("time").toLocalTime();
-        return new Lesson(lessonId, arenaDAO.get(arenaId), trainer, date, time);
-        //TODO: passa a questo DAO tramite costruttore il DAO delle arene e dei trainer in modo da poter accedere tramite il loro id agli oggetti concreti
+    public ArrayList<Lesson> getLessonsForRider(String fiscalCode) throws Exception {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        String query = "SELECT * FROM lessons WHERE rider = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setString(1, fiscalCode);
+        ResultSet resultSet = statement.executeQuery();
+        ArrayList<Lesson> lessons = new ArrayList<>();
+        while (resultSet.next()) lessons.add(this.get(resultSet.getInt("lessonId")));
+        resultSet.close();
+        statement.close();
+        connection.close();
+        return lessons;
     }
+
+    public void addRiderToLesson(String fiscalCode, Integer lessonId) throws Exception {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        String query = "INSERT OR IGNORE INTO bookings (lesson, rider) VALUES (?, ?)";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setInt(1, lessonId);
+        statement.setString(2, fiscalCode);
+        statement.executeUpdate();
+        statement.close();
+        connection.close();
+    }
+
+    public boolean removeRiderFromLesson(String fiscalCode, Integer lessonId) throws Exception {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        String query = "DELETE FROM bookings WHERE lesson = ? AND rider = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setInt(1, lessonId);
+        statement.setString(2, fiscalCode);
+        int result = statement.executeUpdate();
+        statement.close();
+        connection.close();
+        return result != 0;
+    }
+
+
 }
