@@ -12,15 +12,15 @@ public class HorseBox {
         return horse;
     }
 
-    public void assignHorse(Horse horse) {
-        this.horse = horse;
+    public int getHorseId(Horse horse){
+        return horse.getHorseId();
     }
 
     public int getBoxID() {
         return boxID;
     }
 
-    public void freeBox(){
-        horse = null;
+    public void setHorse(Horse horse) {
+        this.horse = horse;
     }
 }
