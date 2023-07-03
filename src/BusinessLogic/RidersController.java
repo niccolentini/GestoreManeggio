@@ -24,8 +24,9 @@ public class RidersController {
         }
         else if (membership == 2){
             rider.setMembership(new GroomPack(m));
-        }
-        else {
+        } else if (membership == 3) {
+            rider.setMembership(new LessonsPack(new GroomPack(m)));
+        } else {
             rider.setMembership(m);
         }
         riderDAO.add(rider);

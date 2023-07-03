@@ -13,6 +13,11 @@ public abstract class MembershipDecorator implements Membership {
     }
 
     @Override
+    public void setNumLessons(int numLessons) {
+        membership.setNumLessons(numLessons);
+    }
+
+    @Override
     public float getPrice() {
         return membership.getPrice();
     }

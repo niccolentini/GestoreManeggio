@@ -4,14 +4,14 @@ public class LessonsPack extends MembershipDecorator{
     public String getType(){
         return "LessonsPack";
     }
-    private int lessons = 10;
+
     public LessonsPack(Membership membership) {
         super(membership);
+        super.setNumLessons(10);
     }
-
     @Override
     public int getNumLessons() {
-        return lessons;
+        return super.getNumLessons();
     }
 
     @Override
@@ -25,10 +25,10 @@ public class LessonsPack extends MembershipDecorator{
     }
 
     public void useLesson(){
-        lessons = lessons - 1;
+        super.setNumLessons(super.getNumLessons()-1);
     }
 
     public void earnLesson(){
-        lessons = lessons + 1;
+        super.setNumLessons(super.getNumLessons()+1);
     }
 }
