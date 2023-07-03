@@ -23,7 +23,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
     }
 
 
-    //TODO: da rivedere
+    //TODO da rivedere
     @Override
     public void add(Lesson less) throws SQLException {
         if (less instanceof Lesson) {
@@ -182,6 +182,20 @@ public class LessonDAO implements DAO <Lesson, Integer> {
         statement.close();
         connection.close();
         return result != 0;
+    }
+
+    public boolean isArenaBookedForLesson(int idArena) throws Exception {
+        //restituisce true se l'arena è prenotata per almeno una lezione
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        String query = "SELECT * FROM lesson WHERE arena = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setInt(1, idArena);
+        ResultSet resultSet = statement.executeQuery();
+        boolean result = resultSet.next();
+        resultSet.close();
+        statement.close();
+        connection.close();
+        return result;
     }
 
 

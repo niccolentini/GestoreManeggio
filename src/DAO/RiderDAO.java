@@ -16,7 +16,7 @@ public class RiderDAO implements DAO<Rider, String> {
     //TODO: devi dare a questo DAO il horseDAO in modo che il rider possa avere un cavallo di tipo Horse
 
     public void add(Rider rider) throws SQLException {
-        String query = "INSERT INTO rider (fiscalCod, firstName, lastName, horse) VALUES (?, ?, ?)";
+        String query = "INSERT INTO rider (fiscalCode, firstName, lastName, horse) VALUES (?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, rider.getFiscalCod());
             statement.setString(2, rider.getFirstName());
@@ -28,7 +28,7 @@ public class RiderDAO implements DAO<Rider, String> {
 
     @Override
     public void update(Rider rider) throws SQLException {
-        String query = "UPDATE rider SET fiscalCod = ?, firstName = ?, lastName = ?, horse = ? WHERE id = ?";
+        String query = "UPDATE rider SET fiscalCode = ?, firstName = ?, lastName = ?, horse = ? WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, rider.getFiscalCod());
             statement.setString(2, rider.getFirstName());
@@ -40,7 +40,7 @@ public class RiderDAO implements DAO<Rider, String> {
 
     @Override
     public void remove(String fisCod) throws SQLException {
-        String query = "DELETE FROM rider WHERE fiscalCod = ?";
+        String query = "DELETE FROM rider WHERE fiscalCode = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, fisCod);
             statement.executeUpdate();
@@ -48,7 +48,7 @@ public class RiderDAO implements DAO<Rider, String> {
     }
 
     public Rider get(String fisCod) throws SQLException {
-        String query = "SELECT * FROM rider WHERE fiscalCod = ?";
+        String query = "SELECT * FROM rider WHERE fiscalCode = ?";
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, fisCod);
             try (ResultSet resultSet = statement.executeQuery()) {

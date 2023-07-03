@@ -1,71 +1,42 @@
 package BusinessLogic;
+import DAO.ArenaDAO;
+import DAO.LessonDAO;
 import DomainModel.Arena;
 import java.util.ArrayList;
 
 public class ArenasController {
-    private ArrayList<Arena> arenas = new ArrayList<Arena>();
+    ArenaDAO arenaDAO;
+    LessonDAO lessonDAO;
 
-    public void addArena(Arena arena){
-        arenas.add(arena);
+    public ArenasController(ArenaDAO arenaDAO, LessonDAO lessonDAO){
+        this.arenaDAO = arenaDAO;
+        this.lessonDAO = lessonDAO;
     }
 
-    public void removeArena(int nArena){
-        Arena target = null;
-        for(Arena ar : arenas) {
-            if (ar.getIdArena() == nArena) {
-                target = ar;
-                break;
-            }
-        }
-            if(target != null){
-                arenas.remove(target);
-                System.out.println("Arena rimossa correttamente!");
-            }else {
-                System.out.println("L'identificativo inserito non corrisponde con nessuna arena del centro.");
-            }
-        }
+    public void addArena(Arena arena) throws Exception{
+        arenaDAO.add(arena);
+    }
 
+    public void disableArena (int idArena) throws Exception{
+        //è possibile disabilitare solo arene che non hanno prenotazioni
+        Arena arena = arenaDAO.get(idArena);
+        if(arena==null) {throw new Exception("L'arena selezionata non esiste.");}
 
-    public void disableArena (int nArena) {
-        Arena target = null;
-        for (Arena ar : arenas) {
-            if (ar.getIdArena() == nArena) {
-                target = ar;
-                break;
-            }
-        }
-        if (target != null) {
-            boolean available = target.isAvailable();
-            if (available) {
-                target.setAvailable(false);
-                System.out.println("Arena disabilitata correttamente!");
-            } else {
-                System.out.println("L'arena selezionata risulta già disabilitata.");
-            }
-        } else {
-            System.out.println("L'identificativo inserito non corrisponde con nessuna arena del centro.");
-        }
+        if(arena.isAvailable()) { throw new Exception("L'arena selezionata risulta già disabilitata.");}
+        if(isBooked(idArena)) { throw new Exception("L'arena selezionata non può essere disabilitata in quanto ci sono lezioni prenotate.");}
+        arenaDAO.disable(idArena);
     }
 
 
-    public void enableArena(int nArena) {
-        Arena target = null;
-        for (Arena ar : arenas) {
-            if (ar.getIdArena() == nArena) {
-                target = ar;
-                break;
-            }
-        }
-        if (target != null) {
-            boolean available = target.isAvailable();
-            if (!available) {
-                target.setAvailable(true);
-                System.out.println("Arena abilitata correttamente!");
-            } else {
-                System.out.println("L'arena selezionata risulta già abilitata.");
-            }
-        } else {
-            System.out.println("L'identificativo inserito non corrisponde con nessuna arena del centro.");
-        }
+    public void enableArena(int idArena){
+
     }
+
+
+    public boolean isBooked(int idArena) throws Exception{
+        return lessonDAO.isArenaBookedForLesson(idArena);
+    }
+
+    //TODO fai metodo che restituisce tutte le arene disponibili
+
 }

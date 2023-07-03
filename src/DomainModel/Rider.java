@@ -3,10 +3,10 @@ package DomainModel;
 import DomainModel.Membership.Membership;
 
 public class Rider extends User{
-    private String horse;
+    private Horse horse;
     private Membership membership;
 
-    public Rider(String fiscalCod, String firstName, String lastName, String horse) {
+    public Rider(String fiscalCod, String firstName, String lastName, Horse horse) {
         super(fiscalCod, firstName, lastName);
         this.horse = horse;
     }
@@ -19,7 +19,7 @@ public class Rider extends User{
         this.membership = membership;
     }
 
-    public String getHorse() {
+    public Horse getHorse() {
         return horse;
     }
 

@@ -10,24 +10,35 @@ import java.util.ArrayList;
 public class ArenaDAO implements DAO <Arena, Integer> {
     @Override
     public void add(Arena arena) throws Exception {
-
+        Connection connection= DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO arenas (name) VALUES (?)");
+        //id is auto-incremented, so it's not needed
+        ps.setString(1, arena.getName());
+        ps.executeUpdate();
+        ps.close();
+        connection.close();
     }
 
     @Override
     public void update(Arena arena) throws Exception {
-
+        Connection connection= DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        PreparedStatement ps = connection.prepareStatement("UPDATE arenas SET name = ? WHERE id = ?");
+        ps.setString(1, arena.getName());
+        ps.setInt(2, arena.getIdArena());
+        ps.executeUpdate();
+        ps.close();
+        connection.close();
     }
 
     @Override
-    public void remove(Integer integer) throws Exception {
-
+    public void remove(Integer id) {
     }
 
     @Override
     public Arena get(Integer id) throws Exception {
         Connection connection= DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
         Arena arena = null;
-        PreparedStatement ps = connection.prepareStatement("SELECT * FROM arenas WHERE arenaId = ?");
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM arenas WHERE id = ?");
         ps.setInt(1, id);
         ResultSet rs = ps.executeQuery();
         if(rs.next())
@@ -45,6 +56,29 @@ public class ArenaDAO implements DAO <Arena, Integer> {
 
     @Override
     public ArrayList<Arena> getAll() throws Exception {
-        return null;
+        Connection connection= DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        ArrayList<Arena> arenas = new ArrayList<>();
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM arenas");
+        ResultSet rs = ps.executeQuery();
+        while(rs.next())
+        {
+            arenas.add(new Arena(
+                    rs.getString("name"),
+                    rs.getInt("id")));
+        }
+        rs.close();
+        ps.close();
+        connection.close();
+        return arenas;
+    }
+
+    public void disable(int idArena) throws Exception{
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        String query = "UPDATE arenas SET available = 0 WHERE id = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setInt(1, idArena);
+        statement.executeUpdate();
+        statement.close();
+        connection.close();
     }
 }
