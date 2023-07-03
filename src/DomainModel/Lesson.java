@@ -8,7 +8,6 @@ import java.util.ArrayList;
 public class Lesson {
     private int lessonId;
     private Arena arena;
-    private ArrayList<Rider> riders = new ArrayList<Rider>();
     private Trainer trainer;
     LocalDate date;
     LocalTime time;
@@ -32,24 +31,8 @@ public class Lesson {
         return arena;
     }
 
-    public ArrayList<Rider> getRiders() {
-        return riders;
-    }
-
-    public void addRider(Rider r){
-        riders.add(r);
-    }
-
-    public void removeRider(Rider r){
-        riders.remove(r);
-    }
-
     public Trainer getTrainer() {
         return trainer;
-    }
-
-    public LocalDateTime getDateTime() {
-        return LocalDateTime.of(date, time);
     }
 
     public LocalDate getDate() {
@@ -60,17 +43,8 @@ public class Lesson {
         return time;
     }
 
-    public int getAvailableSlot (){
-        int size = riders.size();
-        return 3-size;
-    }
-
     public int getNumRider() {
         return numRider;
-    }
-
-    public void setNumRider(int numrider){
-        numRider = numrider;
     }
 
     public int getMaxRiders() {

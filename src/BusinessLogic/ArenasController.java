@@ -13,7 +13,12 @@ public class ArenasController {
         this.lessonDAO = lessonDAO;
     }
 
-    public void addArena(Arena arena) throws Exception{
+    public Arena getArena(int idArena) throws Exception{
+        return arenaDAO.get(idArena);
+    }
+
+    public void addArena(String name) throws Exception{
+        Arena arena = new Arena(name, arenaDAO.getNextId());
         arenaDAO.add(arena);
     }
 
@@ -22,21 +27,20 @@ public class ArenasController {
         Arena arena = arenaDAO.get(idArena);
         if(arena==null) {throw new Exception("L'arena selezionata non esiste.");}
 
-        if(arena.isAvailable()) { throw new Exception("L'arena selezionata risulta già disabilitata.");}
-        if(isBooked(idArena)) { throw new Exception("L'arena selezionata non può essere disabilitata in quanto ci sono lezioni prenotate.");}
-        arenaDAO.disable(idArena);
+        if(!arena.isAvailable()) { throw new Exception("L'arena selezionata risulta già disabilitata.");}
+        if(lessonDAO.isArenaBookedForLesson(idArena)) { throw new Exception("L'arena selezionata non può essere disabilitata in quanto ci sono lezioni prenotate.");}
+        arena.setAvailable(false);
+        arenaDAO.update(arena);
     }
 
+    public void enableArena(int idArena) throws Exception{
+        Arena arena = arenaDAO.get(idArena);
+        if(arena==null) {throw new IllegalArgumentException("L'arena selezionata non esiste.");}
 
-    public void enableArena(int idArena){
-
+        if(arena.isAvailable()) { throw new IllegalArgumentException("L'arena selezionata risulta già abilitata.");}
+        arena.setAvailable(true);
+        arenaDAO.update(arena);
     }
 
-
-    public boolean isBooked(int idArena) throws Exception{
-        return lessonDAO.isArenaBookedForLesson(idArena);
-    }
-
-    //TODO fai metodo che restituisce tutte le arene disponibili
 
 }

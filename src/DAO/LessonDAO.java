@@ -10,132 +10,111 @@ import java.util.ArrayList;
 
 
 public class LessonDAO implements DAO <Lesson, Integer> {
-    private Connection connection;
     ArenaDAO arenaDAO;
     RiderDAO riderDAO;
     TrainerDAO trainerDAO;
 
-    public LessonDAO(Connection connection, ArenaDAO arenaDao, RiderDAO riderDAO, TrainerDAO trainerDAO) { //TODO: aggiungi nel controllore il trainerDAO e arenaDAO
-        this.connection = connection;
+    public LessonDAO(ArenaDAO arenaDao, RiderDAO riderDAO, TrainerDAO trainerDAO) {
+
         this.arenaDAO = arenaDao;
         this.riderDAO = riderDAO;
         this.trainerDAO = trainerDAO;
     }
 
 
-    //TODO da rivedere
-    @Override
-    public void add(Lesson less) throws SQLException {
-        if (less instanceof Lesson) {
-            Lesson lesson = (Lesson) less;
-            try {
-                String query = "INSERT INTO lesson (lessonId, arena, trainer, date, time) VALUES (?, ?, ?, ?, ?)";
-                try (PreparedStatement statement = connection.prepareStatement(query)) {
-                    statement.setInt(1, lesson.getLessonId());
-                    statement.setInt(2, lesson.getArena().getIdArena());
-                    statement.setString(3, lesson.getTrainer().getFiscalCod());
-                    statement.setDate(4, Date.valueOf(lesson.getDate()));
-                    statement.setTime(5, Time.valueOf(lesson.getTime()));
-                    statement.executeUpdate();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
-    //TODO: da rivedere
     @Override
-    public void update(Lesson o) throws SQLException{
-        if (o instanceof Lesson) {
-            Lesson lesson = (Lesson) o;
-            try {
-                String query = "UPDATE lesson SET arena = ?, trainer = ?, date = ?, time = ? WHERE lessonId = ?";
-                try (PreparedStatement statement = connection.prepareStatement(query)) {
-                    statement.setInt(1, lesson.getArena().getIdArena());
-                    statement.setString(2, lesson.getTrainer().getFiscalCod());
-                    statement.setDate(3, Date.valueOf(lesson.getDate()));
-                    statement.setTime(4, Time.valueOf(lesson.getTime()));
-                    statement.setInt(5, lesson.getLessonId());
-                    statement.executeUpdate();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    //TODO: da rivedere
-    @Override
-    public void remove(Integer integer) throws Exception {
-        try {
-            String query = "DELETE FROM lesson WHERE lessonId = ?";
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setInt(1, integer);
-                statement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //TODO: da rivedere
-    @Override
-    public Lesson get(Integer id) throws Exception {
-        try {
-            String query = "SELECT * FROM lesson WHERE lessonId = ?";
-            try (PreparedStatement statement = connection.prepareStatement(query)) {
-                statement.setInt(1, id);
-                try (ResultSet resultSet = statement.executeQuery()) {
-                    if (resultSet.next()) {
-                        return extractLessonFromResultSet(resultSet);
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public void add(Lesson lesson) throws SQLException {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO lessons ( arena, trainer, date, time) VALUES (?,?,?,?,?)");
+        //id is auto-generated, so it's not needed
+        statement.setInt(1, lesson.getArena().getIdArena());
+        statement.setString(2, lesson.getTrainer().getFiscalCod());
+        statement.setString(3, lesson.getDate().toString());
+        statement.setString(4, lesson.getTime().toString());
+        statement.executeUpdate();
+        statement.close();
+        connection.close();
     }
 
 
-    //TODO: da rivedere
+    @Override
+    public void update(Lesson lesson) throws SQLException{
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        PreparedStatement statement = connection.prepareStatement("UPDATE lessons SET arena = ?, trainer = ?, date = ?, time = ? WHERE id = ?");
+        statement.setInt(1, lesson.getArena().getIdArena());
+        statement.setString(2, lesson.getTrainer().getFiscalCod());
+        statement.setString(3, lesson.getDate().toString());
+        statement.setString(4, lesson.getTime().toString());
+        statement.setInt(5, lesson.getLessonId());
+        statement.executeUpdate();
+        statement.close();
+        connection.close();
+    }
+
+
+    @Override
+    public void remove(Integer lessonId) throws Exception {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        PreparedStatement statement = connection.prepareStatement("DELETE FROM lessons WHERE id = ?");
+        statement.setInt(1, lessonId);
+        statement.executeUpdate();
+        statement.close();
+        connection.close();
+    }
+
+
+    @Override
+    public Lesson get(Integer lessonId) throws Exception {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Lesson lesson = null;
+        PreparedStatement statement = connection.prepareStatement("SELECT * FROM lessons WHERE id = ?");
+        statement.setInt(1, lessonId);
+        ResultSet resultSet = statement.executeQuery();
+        if(resultSet.next())
+        {
+            lesson = new Lesson(
+                    lessonId,
+                    arenaDAO.get(resultSet.getInt("arena")), //restituisce l'arena con id = resultSet.getInt("arena")
+                    trainerDAO.get(resultSet.getString("trainer")),
+                    LocalDate.parse(resultSet.getString("date")),
+                    LocalTime.parse(resultSet.getString("time"))
+            );
+        }
+        resultSet.close();
+        statement.close();
+        connection.close();
+        return lesson;
+
+    }
+
+
     @Override
     public ArrayList<Lesson> getAll() throws Exception{
-        try {
-            String query = "SELECT * FROM lesson";
-            try (PreparedStatement statement = connection.prepareStatement(query);
-                 ResultSet resultSet = statement.executeQuery()) {
-                ArrayList<Lesson> lessons = new ArrayList<>();
-                while (resultSet.next()) {
-                    lessons.add(extractLessonFromResultSet(resultSet));
-                }
-                return lessons;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM lessons");
+        ArrayList<Lesson> lessons = new ArrayList<>();
+        while (resultSet.next()) {
+            lessons.add(new Lesson(
+                    resultSet.getInt("id"),
+                    arenaDAO.get(resultSet.getInt("arena")),
+                    trainerDAO.get(resultSet.getString("trainer")),
+                    LocalDate.parse(resultSet.getString("date")),
+                    LocalTime.parse(resultSet.getString("time"))
+            ));
         }
-        return null;
+        resultSet.close();
+        statement.close();
+        connection.close();
+        return lessons;
     }
-
-    //TODO: da rivedere
-    private Lesson extractLessonFromResultSet(ResultSet resultSet) throws Exception {
-        int lessonId = resultSet.getInt("lessonId");
-        int arenaId = resultSet.getInt("arenaId");
-        String trainerFiscalCode = resultSet.getString("trainer");
-        LocalDate date = resultSet.getDate("date").toLocalDate();
-        LocalTime time = resultSet.getTime("time").toLocalTime();
-
-        return new Lesson(lessonId, arenaDAO.get(arenaId), trainerDAO.get(trainerFiscalCode), date, time);
-        //fixme: passa a questo DAO tramite costruttore il DAO delle arene e dei trainer in modo da poter accedere tramite il loro id agli oggetti concreti
-    }
-
 
 
     public ArrayList<Rider> getRidersForLesson(Integer lessonId) throws Exception {
 
         Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
-        String query = "SELECT * FROM lesson WHERE leddonId = ?";
+        String query = "SELECT * FROM bookings WHERE lesson = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setInt(1, lessonId);
         ResultSet resultSet = statement.executeQuery();
@@ -149,7 +128,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
 
     public ArrayList<Lesson> getLessonsForRider(String fiscalCode) throws Exception {
         Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
-        String query = "SELECT * FROM lessons WHERE rider = ?";
+        String query = "SELECT * FROM bookings WHERE rider = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1, fiscalCode);
         ResultSet resultSet = statement.executeQuery();
@@ -187,7 +166,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
     public boolean isArenaBookedForLesson(int idArena) throws Exception {
         //restituisce true se l'arena è prenotata per almeno una lezione
         Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
-        String query = "SELECT * FROM lesson WHERE arena = ?";
+        String query = "SELECT * FROM lessons WHERE arena = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setInt(1, idArena);
         ResultSet resultSet = statement.executeQuery();
@@ -198,5 +177,31 @@ public class LessonDAO implements DAO <Lesson, Integer> {
         return result;
     }
 
+    public boolean isArenaBookedAtTimeDate(int idArena, LocalDate date, LocalTime time) throws Exception {
+        //restituisce true se l'arena è prenotata per quella data e ora
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        String query = "SELECT * FROM lessons WHERE arena = ? AND date = ? AND time = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setInt(1, idArena);
+        statement.setString(2, date.toString());
+        statement.setString(3, time.toString());
+        ResultSet resultSet = statement.executeQuery();
+        boolean result = resultSet.next(); //restituisce false se non c'è nessuna riga
+        resultSet.close();
+        statement.close();
+        connection.close();
+        return result;
+    }
 
+    public int getNextId() throws Exception{
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        String query = "SELECT MAX(id) FROM lessons";
+        PreparedStatement statement = connection.prepareStatement(query);
+        ResultSet rs = statement.executeQuery();
+        int id = rs.getInt(1) + 1;
+        rs.close();
+        statement.close();
+        connection.close();
+        return id;
+    }
 }

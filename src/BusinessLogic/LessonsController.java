@@ -11,41 +11,39 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class LessonsController extends Subject {
-    private ArrayList<Lesson> lessons = new ArrayList<Lesson>();
     private final LessonDAO lessonDAO;
+    private final TrainersController trainersController;
+    private final ArenasController arenaController;
 
-    public LessonsController(LessonDAO lessonDAO) {
+    public LessonsController(LessonDAO lessonDAO, TrainersController trainersController, ArenasController arenaController){
         this.lessonDAO = lessonDAO;
+        this.trainersController = trainersController;
+        this.arenaController = arenaController;
     }
 
-    public void addLesson (int lessonId, Arena arena, Trainer trainer, LocalDate date, LocalTime time){
-        Lesson l = new Lesson(lessonId, arena, trainer, date, time);
-        lessons.add(l);
-    }
-
-    public void removeLesson(int lessonId) {
-        for (Lesson l : lessons){
-            if(l.getLessonId() == lessonId){
-                lessons.remove(l);
-                System.out.println("Lezione rimossa!");
-                notifyObservers(l); //fixme: siccome cancello la lezione, la cosa che ha senso fare è chiamare il dao per cancellare dalla tabella di associazione rider-lezione
-            }
+    public void addLesson (int idArena, String trainerFiscalCode, LocalDate date, LocalTime time) throws Exception{
+        Trainer trainer = trainersController.getTrainer(trainerFiscalCode);
+        if(trainer == null) {
+            throw new IllegalArgumentException("Trainer not found");
         }
-        System.out.println("L'ID inserito non corrisponde a nessuna lezione");
+
+        //check if the arena is available and not booked for this date and time
+        Arena arena = arenaController.getArena(idArena);
+        if(arena == null) { throw new IllegalArgumentException("Arena not found");}
+        if(!arena.isAvailable()) { throw new IllegalArgumentException("Arena not available"); }
+        if(lessonDAO.isArenaBookedAtTimeDate(idArena, date, time)) { throw new IllegalArgumentException("Arena already booked at this time and date");}
+
+        Lesson lesson = new Lesson(lessonDAO.getNextId(), arena, trainer, date, time);
+        lessonDAO.add(lesson);
     }
 
-    public ArrayList<Lesson> getLessonsForTrainer(String fisCod) {
-        ArrayList<Lesson> lft = new ArrayList<Lesson>();
-        for(Lesson l : lessons){
-            if(Objects.equals(l.getTrainer().getFiscalCod(), fisCod)){
-                lft.add(l);
-            }
-        }
-        return lft;
+    public void deleteLesson(int lessonId) throws Exception{
+
+        lessonDAO.remove(lessonId);
     }
 
-    public ArrayList<Lesson> getAllLessons(){
-        return this.lessons;
+    public ArrayList<Lesson> getAllLessons() throws Exception{
+        return lessonDAO.getAll();
     }
 
     Lesson getLesson (int lessonId) throws Exception{

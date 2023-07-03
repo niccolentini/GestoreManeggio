@@ -4,8 +4,6 @@ import DAO.HorseBoxDAO;
 import DomainModel.Horse;
 import DomainModel.HorseBox;
 
-import javax.swing.*;
-import java.util.ArrayList;
 
 public class HorseBoxController {
 
@@ -15,7 +13,8 @@ public class HorseBoxController {
         this.horseBoxDAO = horseBoxDAO;
     }
 
-    public void addBox(HorseBox horseBox) throws Exception{
+    public void addBox() throws Exception{
+        HorseBox horseBox = new HorseBox(horseBoxDAO.getNextId());
         horseBoxDAO.add(horseBox);
     }
 

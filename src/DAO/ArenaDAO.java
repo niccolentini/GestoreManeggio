@@ -72,13 +72,16 @@ public class ArenaDAO implements DAO <Arena, Integer> {
         return arenas;
     }
 
-    public void disable(int idArena) throws Exception{
+
+    public int getNextId() throws Exception{
         Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
-        String query = "UPDATE arenas SET available = 0 WHERE id = ?";
+        String query = "SELECT MAX(id) FROM arenas";
         PreparedStatement statement = connection.prepareStatement(query);
-        statement.setInt(1, idArena);
-        statement.executeUpdate();
+        ResultSet rs = statement.executeQuery();
+        int id = rs.getInt(1) + 1;
+        rs.close();
         statement.close();
         connection.close();
+        return id;
     }
 }

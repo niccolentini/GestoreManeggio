@@ -95,4 +95,16 @@ public class HorseBoxDAO implements DAO <HorseBox, Integer>{
         return box;
     }
 
+    public int getNextId() throws Exception{
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        String query = "SELECT MAX(box) FROM horseBoxes";
+        PreparedStatement statement = connection.prepareStatement(query);
+        ResultSet rs = statement.executeQuery();
+        int id = rs.getInt(1) + 1;
+        rs.close();
+        statement.close();
+        connection.close();
+        return id;
+    }
+
 }
