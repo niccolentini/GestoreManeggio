@@ -2,6 +2,8 @@ package DomainModel.Membership;
 
 public class BoxPack implements Membership { //pacchetto base
     /** Base membership. Just the horse box. */
+
+
     private int lessons = 0;
     public String getType(){
         return "BoxPack";

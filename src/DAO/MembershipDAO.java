@@ -1,181 +1,67 @@
 package DAO;
 import DomainModel.Membership.*;
-import java.util.ArrayList;
+
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
-public class MembershipDAO{
+public class MembershipDAO {
     private Connection connection;
-
     public MembershipDAO(Connection connection) {
         this.connection = connection;
     }
-
-    //TODO: da rivedere
-    public void add(Object o) {
-        if (o instanceof Membership) {
-            Membership membership = (Membership) o;
-            try {
-                createMembership(membership);
-            } catch (SQLException e) {
-                System.err.println("Errore durante l'aggiunta della membership.");
-                e.printStackTrace();
+    public Membership get(String fiscalCode) throws SQLException {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        PreparedStatement ps = connection.prepareStatement("SELECT * FROM memberships WHERE rider = ?");
+        ps.setString(1, fiscalCode);
+        ResultSet rs = ps.executeQuery();
+        Membership membership = null;
+        if (rs.next()) {
+            Membership m = new BoxPack();
+            membership = m;
+            if (rs.getString("type").equals("LessonsPack")) {
+                Membership memb = new LessonsPack(m);
+                memb.setNumLessons(rs.getInt("numLessons"));
+                membership = memb;
+            } else if (rs.getString("type").equals("GroomPack")) {
+                Membership memb = new GroomPack(m);
+                memb.setNumLessons(rs.getInt("numLessons"));
+                membership = memb;
             }
-        } else {
-            throw new IllegalArgumentException("L'oggetto fornito non è di tipo Membership.");
+            membership.setNumLessons(rs.getInt("numLessons"));
         }
-    }
-
-    //TODO: da rivedere
-    public void update(Object o) {
-        if (o instanceof Membership) {
-            Membership membership = (Membership) o;
-            try {
-                updateMembership(membership);
-            } catch (SQLException e) {
-                System.err.println("Errore durante l'aggiornamento della membership.");
-                e.printStackTrace();
-            }
-        } else {
-            throw new IllegalArgumentException("L'oggetto fornito non è di tipo Membership.");
-        }
-    }
-
-    //TODO: da rivedere
-    public void remove(int id) {
-        try {
-            deleteMembership(id);
-        } catch (SQLException e) {
-            System.err.println("Errore durante la rimozione della membership.");
-            e.printStackTrace();
-        }
-    }
-
-    //TODO: da rivedere
-    public Object get(int id) {
-        try {
-            return getMembershipById(id);
-        } catch (SQLException e) {
-            System.err.println("Errore durante il recupero della membership.");
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    //TODO: da rivedere
-    public ArrayList<Object> getAll() {
-        try {
-            return getAllMemberships();
-        } catch (SQLException e) {
-            System.err.println("Errore durante il recupero delle memberships.");
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
-    }
-
-
-    private void createMembership(Membership membership) throws SQLException {
-        String query = "INSERT INTO membership (id, packType) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, membership.getID());
-            statement.setString(2, membership.getType());
-            statement.executeUpdate();
-        }
-    }
-
-    private void updateMembership(Membership membership) throws SQLException {
-        String query = "UPDATE membership SET packType = ? WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, membership.getType());
-            statement.setInt(2, membership.getID());
-            statement.executeUpdate();
-        }
-    }
-
-    private void deleteMembership(int id) throws SQLException {
-        String query = "DELETE FROM membership WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, id);
-            statement.executeUpdate();
-        }
-    }
-
-    private Membership getMembershipById(int id) throws SQLException {
-        String query = "SELECT * FROM membership WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return extractMembershipFromResultSet(resultSet);
-                }
-            }
-        }
-        return null;
-    }
-
-    private ArrayList<Object> getAllMemberships() throws SQLException {
-        String query = "SELECT * FROM membership";
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
-            ArrayList<Object> memberships = new ArrayList<>();
-            while (resultSet.next()) {
-                memberships.add(extractMembershipFromResultSet(resultSet));
-            }
-            return memberships;
-        }
-    }
-
-    public int getMaxMembershipId() throws SQLException {
-        String query = "SELECT MAX(id) AS maxId FROM membership";
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
-            if (resultSet.next()) {
-                return resultSet.getInt("maxId");
-            }
-        }
-        return 0; // Restituisce 0 se non sono presenti membership
-    }
-
-
-    private Membership extractMembershipFromResultSet(ResultSet resultSet) throws SQLException {
-        int id = resultSet.getInt("id");
-        String name = resultSet.getString("name");
-        String email = resultSet.getString("email");
-        String phoneNumber = resultSet.getString("phoneNumber");
-        String packType = resultSet.getString("packType");
-
-        int newId = getMaxMembershipId();
-
-        // Crea il pacchetto di iscrizione corrispondente in base al tipo
-        Membership membership;
-        switch (packType) {
-            case "BoxPack":
-                membership = new BoxPack(newId+1);
-                break;
-            case "LessonPack":
-                BoxPack membershipbase = new BoxPack(newId+1);
-                membership = new LessonsPack(membershipbase);
-                break;
-            case "GroomPack":
-                BoxPack membershipbase2 = new BoxPack(newId+1);
-                membership = new GroomPack(membershipbase2);
-                break;
-            default:
-                throw new IllegalArgumentException("Tipo di pacchetto di iscrizione non valido: " + packType);
-        }
-
+        rs.close();
+        ps.close();
+        connection.close();
         return membership;
     }
 
-    public void closeConnection() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            System.err.println("Errore durante la chiusura della connessione al database.");
-            e.printStackTrace();
-        }
+    public void add(String fiscalCode, Membership membership) throws SQLException {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        PreparedStatement insertMembership = connection.prepareStatement("INSERT INTO memberships (rider, numLessons, type) VALUES (?, ?, ?)");
+        insertMembership.setString(1, fiscalCode);
+        insertMembership.setInt(2, membership.getNumLessons());
+        insertMembership.setString(3, membership.getType().toString());
+        insertMembership.executeUpdate();
+        insertMembership.close();
+        connection.close();
+    }
+
+    public void update(String fiscalCode, Membership membership) throws SQLException {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        PreparedStatement updateMembership = connection.prepareStatement("UPDATE memberships SET numLessons WHERE rider = ?");
+        updateMembership.setInt(1, membership.getNumLessons());
+        updateMembership.setString(2, fiscalCode);
+        updateMembership.executeUpdate();
+        updateMembership.close();
+        connection.close();
+    }
+
+    public boolean delete(String fiscalCode) throws SQLException {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        PreparedStatement deleteMembership = connection.prepareStatement("DELETE FROM memberships WHERE rider = ?");
+        deleteMembership.setString(1, fiscalCode);
+        int rows = deleteMembership.executeUpdate();
+        deleteMembership.close();
+        connection.close();
+        return rows > 0;
     }
 }
