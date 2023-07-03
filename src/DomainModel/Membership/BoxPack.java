@@ -1,24 +1,9 @@
 package DomainModel.Membership;
 
 public class BoxPack implements Membership{ //pacchetto base
-
-    private int ID;
-
-    public BoxPack(int ID) {
-        this.ID = ID;
-    }
-
+    /** Base membership. Just the horse box. */
     public String getType(){
         return "BoxPack";
-    }
-
-    public void setID(int ID) {
-        this.ID = ID;
-    }
-
-    @Override
-    public int getID() {
-        return ID;
     }
 
     @Override

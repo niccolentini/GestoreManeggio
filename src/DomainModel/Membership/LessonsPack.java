@@ -1,20 +1,9 @@
 package DomainModel.Membership;
 
 public class LessonsPack extends MembershipDecorator{
-    private int ID;
-
-    public void setID(int ID) {
-        this.ID = ID;
-    }
-
     public String getType(){
         return "LessonsPack";
     }
-    @Override
-    public int getID() {
-        return ID;
-    }
-
     private int lessons = 10;
     public LessonsPack(Membership membership) {
         super(membership);
