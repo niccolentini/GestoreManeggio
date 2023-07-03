@@ -42,7 +42,7 @@ public class RidersController {
         this.riderDAO.remove(fiscalcod);
     }
 
-    public Rider getRiderByFisCod(String fiscalcod) throws SQLException {
+    public Rider getRiderByFisCod(String fiscalcod) throws Exception {
         return this.riderDAO.get(fiscalcod);
     }
 
