@@ -12,26 +12,26 @@ public class RidersController {
         this.riderDAO = riderDAO;
     }
 
-    public void newRider(String fiscalcod, String fstName, String lstname, String horse) throws SQLException {
+    public void addRider(String fiscalcod, String fstName, String lstname, String horse) throws SQLException {
         Rider rider = new Rider(fiscalcod, fstName, lstname, horse);
-        riderDAO.createRider(rider);
+        riderDAO.add(rider);
     }
 
     public void updateRider(String fiscalcod, String fstName, String lstname, String horse) throws SQLException {
         Rider rider = new Rider(fiscalcod, fstName, lstname, horse);
-        riderDAO.updateRider(rider);
+        riderDAO.update(rider);
     }
 
     public void deleteRider(String fiscalcod) throws SQLException {
-        riderDAO.deleteRider(fiscalcod);
+        this.riderDAO.remove(fiscalcod);
     }
 
     public Rider getRiderByFisCod(String fiscalcod) throws SQLException {
-        return riderDAO.getRiderByFisCod(fiscalcod);
+        return this.riderDAO.get(fiscalcod);
     }
 
     public ArrayList<Rider> getAllRiders() throws SQLException {
-        return (ArrayList<Rider>) riderDAO.getAllRiders();
+        return (ArrayList<Rider>) riderDAO.getAll();
     }
 
 

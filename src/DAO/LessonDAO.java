@@ -1,17 +1,23 @@
 package DAO;
 
 import DomainModel.Lesson;
+import DomainModel.Rider;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
+
 public class LessonDAO implements DAO <Lesson, Integer> {
     private Connection connection;
+    ArenaDAO arenaDAO;
+    RiderDAO riderDAO;
 
-    public LessonDAO(Connection connection) { //TODO: aggiungi nel controllore il trainerDAO e arenaDAO
+    public LessonDAO(Connection connection, ArenaDAO arenaDao, RiderDAO riderDAO) { //TODO: aggiungi nel controllore il trainerDAO e arenaDAO
         this.connection = connection;
+        this.arenaDAO = arenaDao;
+        this.riderDAO = riderDAO;
     }
 
     @Override
@@ -88,7 +94,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
 
 
     @Override
-    public ArrayList<Lesson> getAll() {
+    public ArrayList<Lesson> getAll() throws Exception{
         try {
             String query = "SELECT * FROM lesson";
             try (PreparedStatement statement = connection.prepareStatement(query);
@@ -105,13 +111,28 @@ public class LessonDAO implements DAO <Lesson, Integer> {
         return null;
     }
 
-    private Lesson extractLessonFromResultSet(ResultSet resultSet) throws SQLException {
+    public ArrayList<Rider> getRidersForLesson(Integer lessonId) throws Exception {
+
+        //Connection connection = Database.getConnection(); //TODO vedi andre e simo che aprono sempre la connessione e poi la chiudono. Necessaria una classe Database
+        String query = "SELECT * FROM lesson WHERE leddonId = ?";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setInt(1, lessonId);
+        ResultSet resultSet = statement.executeQuery();
+        ArrayList<Rider> riders = new ArrayList<>();
+        while (resultSet.next()) riders.add(riderDAO.get(resultSet.getString("fiscalCod")));
+        resultSet.close();
+        statement.close();
+        //Database.closeConnection(connection);
+        return riders;
+    }
+
+    private Lesson extractLessonFromResultSet(ResultSet resultSet) throws Exception {
         int lessonId = resultSet.getInt("lessonId");
-        String arena = resultSet.getString("arena");
-        int trainer = resultSet.getInt("trainer");
+        int arenaId = resultSet.getInt("arenaId");
+        int trainer = resultSet.getInt("trainer"); //TODO: risolvere, non vuole un int vuole un trainer la Lesson
         LocalDate date = resultSet.getDate("date").toLocalDate();
         LocalTime time = resultSet.getTime("time").toLocalTime();
-        return new Lesson(lessonId, ArenaDAO.get(arena), trainer, date, time);
+        return new Lesson(lessonId, arenaDAO.get(arenaId), trainer, date, time);
         //TODO: passa a questo DAO tramite costruttore il DAO delle arene e dei trainer in modo da poter accedere tramite il loro id agli oggetti concreti
     }
 }

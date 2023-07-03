@@ -1,7 +1,9 @@
 package BusinessLogic;
 
+import DAO.LessonDAO;
 import DomainModel.Arena;
 import DomainModel.Lesson;
+import DomainModel.Rider;
 import DomainModel.Trainer;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -10,6 +12,11 @@ import java.util.Objects;
 
 public class LessonsController extends Subject {
     private ArrayList<Lesson> lessons = new ArrayList<Lesson>();
+    private final LessonDAO lessonDAO;
+
+    public LessonsController(LessonDAO lessonDAO) {
+        this.lessonDAO = lessonDAO;
+    }
 
     public void addLesson (int lessonId, Arena arena, Trainer trainer, LocalDate date, LocalTime time){
         Lesson l = new Lesson(lessonId, arena, trainer, date, time);
@@ -39,6 +46,10 @@ public class LessonsController extends Subject {
 
     public ArrayList<Lesson> getAllLessons(){
         return this.lessons;
+    }
+
+    Lesson getLesson (int lessonId) throws Exception{
+        return lessonDAO.get(lessonId);
     }
 
 

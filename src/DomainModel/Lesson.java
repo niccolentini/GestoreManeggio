@@ -13,6 +13,9 @@ public class Lesson {
     LocalDate date;
     LocalTime time;
 
+    private int numRider = 0;
+    private int maxRiders = 3;
+
     public Lesson(int lessonId, Arena arena, Trainer trainer, LocalDate date, LocalTime time) {
         this.lessonId = lessonId;
         this.arena = arena;
@@ -60,5 +63,17 @@ public class Lesson {
     public int getAvailableSlot (){
         int size = riders.size();
         return 3-size;
+    }
+
+    public int getNumRider() {
+        return numRider;
+    }
+
+    public void setNumRider(int numrider){
+        numRider = numrider;
+    }
+
+    public int getMaxRiders() {
+        return maxRiders;
     }
 }
