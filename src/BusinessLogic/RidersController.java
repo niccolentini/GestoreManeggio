@@ -16,7 +16,7 @@ public class RidersController {
         this.riderDAO = riderDAO;
     }
 
-    public void addRider(String fiscalcod, String fstName, String lstname, String horse, int membership) throws SQLException {
+    public void addRider(String fiscalcod, String fstName, String lstname, Horse horse, int membership) throws SQLException {
         Rider rider = new Rider(fiscalcod, fstName, lstname, horse);
         Membership m = new BoxPack();
         if (membership == 1){
@@ -32,7 +32,7 @@ public class RidersController {
         riderDAO.add(rider);
     }
 
-    public void updateRider(String fiscalcod, String fstName, String lstname, String horse, Membership m) throws SQLException {
+    public void updateRider(String fiscalcod, String fstName, String lstname, Horse horse, Membership m) throws SQLException {
         Rider rider = new Rider(fiscalcod, fstName, lstname, horse);
         rider.setMembership(m);
         riderDAO.update(rider);
@@ -46,7 +46,7 @@ public class RidersController {
         return this.riderDAO.get(fiscalcod);
     }
 
-    public ArrayList<Rider> getAllRiders() throws SQLException {
+    public ArrayList<Rider> getAllRiders() throws Exception {
         return (ArrayList<Rider>) riderDAO.getAll();
     }
 
