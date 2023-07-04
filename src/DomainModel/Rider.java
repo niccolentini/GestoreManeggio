@@ -1,9 +1,10 @@
 package DomainModel;
 
+import BusinessLogic.Observer;
 import DomainModel.Membership.Membership;
 
-public class Rider extends User{
-    private Horse horse;
+public class Rider extends User implements Observer {
+    private final Horse horse;
     private Membership membership;
 
     public Rider(String fiscalCod, String firstName, String lastName, Horse horse) {
@@ -21,6 +22,11 @@ public class Rider extends User{
 
     public Horse getHorse() {
         return horse;
+    }
+
+    @Override
+    public void update(){
+        System.out.println("Rider " + this.getFirstName() + " " + this.getLastName() + " has been notified of the lesson cancellation");
     }
 
 }

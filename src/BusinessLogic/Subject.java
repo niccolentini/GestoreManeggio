@@ -4,20 +4,7 @@ import DomainModel.Lesson;
 
 import java.util.ArrayList;
 
-public class Subject {
-        private ArrayList<Observer> observers = new ArrayList<>();
-
-        public void attach(Observer observer) {
-            observers.add(observer);
-        }
-
-        public void detach(Observer observer) {
-            observers.remove(observer);
-        }
-
-        public void notifyObservers(Lesson l) {
-            for (Observer observer : observers) {
-                observer.update(l);
-            }
-        }
+public interface Subject {
+        //non è necessaria la lista di observer in quanto facciamo riderimento al database per sapere gli observer di una lezione
+        public void notifyObservers(int lessonId) throws Exception;
 }

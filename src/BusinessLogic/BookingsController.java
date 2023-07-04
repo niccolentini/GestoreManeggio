@@ -8,7 +8,7 @@ import DomainModel.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class BookingsController implements Observer{
+public class BookingsController{
     private final LessonDAO lessonDAO;
     private final LessonsController lessonsController;
     private final RidersController ridersController;
@@ -32,7 +32,7 @@ public class BookingsController implements Observer{
                 throw new RuntimeException("Il rider è già iscritto ad un'altra lezione in questo orario");
         });
 
-        int numLess = r.getMembership().getNumLessons();
+        int numLess = r.getMembership().getNumLessons();  //numero restanti di lezioni nel pacchetto
         if (numLess > 0){
             if ( l.getNumRider() == l.getMaxRiders())
                 throw new RuntimeException("Prenotazione non andata a buon fine. Sono state raggiunte le prenotazioni massime per questa lezione");
@@ -45,7 +45,8 @@ public class BookingsController implements Observer{
             lessonDAO.addRiderToLesson(riderFiscalCode, lessonId);
         }
         else throw new RuntimeException("Prenotazione non andata a buon fine. Il rider non ha più lezioni disponibili nel proprio pacchetto lezioni");
-        //TODO implementare observer
+        //da questo momento il rider verrà notificato in caso di cambiamenti alla lezione
+        //non creo una lista di observer per ogni lezione in quanto basta accedere al database per sapere gli observer di una lezione
     }
 
     public void removeRiderFromLesson (String fiscalCode, int lessonId) throws Exception{
@@ -57,10 +58,4 @@ public class BookingsController implements Observer{
         return lessonDAO.getLessonsForRider(riderFiscalCode);
     }
 
-
-
-    @Override
-    public void update(Lesson lesson) {
-        //TODO: upddate observer
-    }
 }

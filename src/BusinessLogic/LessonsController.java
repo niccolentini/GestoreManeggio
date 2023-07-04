@@ -10,7 +10,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class LessonsController extends Subject {
+public class LessonsController implements Subject {
     private final LessonDAO lessonDAO;
     private final TrainersController trainersController;
     private final ArenasController arenaController;
@@ -38,8 +38,8 @@ public class LessonsController extends Subject {
     }
 
     public void deleteLesson(int lessonId) throws Exception{
-
         lessonDAO.remove(lessonId);
+        notifyObservers(lessonId); //notifica gli iscritti alla lezione dell'avvenuta cancellazione
     }
 
     public ArrayList<Lesson> getAllLessons() throws Exception{
@@ -51,4 +51,11 @@ public class LessonsController extends Subject {
     }
 
 
+    @Override
+    public void notifyObservers(int lessonId) throws Exception {
+        ArrayList<Rider> observers = lessonDAO.getRidersForLesson(lessonId);
+        for(Rider observer : observers){
+            observer.update();
+        }
+    }
 }
