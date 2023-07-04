@@ -45,6 +45,7 @@ public class BookingsController implements Observer{
             lessonDAO.addRiderToLesson(riderFiscalCode, lessonId);
         }
         else throw new RuntimeException("Prenotazione non andata a buon fine. Il rider non ha più lezioni disponibili nel proprio pacchetto lezioni");
+        //TODO implementare observer
     }
 
     public void removeRiderFromLesson (String fiscalCode, int lessonId) throws Exception{
