@@ -20,7 +20,7 @@ public class LessonsController implements Subject {
         this.arenaController = arenaController;
     }
 
-    public void createLesson (int idArena, String trainerFiscalCode, LocalDate date, LocalTime time) throws Exception{
+    public void addLesson (int idArena, String trainerFiscalCode, LocalDate date, LocalTime time) throws Exception{
         Trainer trainer = trainersController.getTrainer(trainerFiscalCode);
         if(trainer == null) {
             throw new IllegalArgumentException("Trainer not found");
@@ -36,7 +36,7 @@ public class LessonsController implements Subject {
         lessonDAO.add(lesson);
     }
 
-    public void deleteLesson(int lessonId) throws Exception{
+    public void removeLesson(int lessonId) throws Exception{
         lessonDAO.remove(lessonId);
         notifyObservers(lessonId); //notifica gli iscritti alla lezione dell'avvenuta cancellazione
     }
