@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class ArenaDAO implements DAO <Arena, Integer> {
     @Override
     public void add(Arena arena) throws Exception {
-        Connection connection= DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection= DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement ps = connection.prepareStatement("INSERT INTO arenas (name) VALUES (?)");
         //id is auto-incremented, so it's not needed
         ps.setString(1, arena.getName());
@@ -21,7 +21,7 @@ public class ArenaDAO implements DAO <Arena, Integer> {
 
     @Override
     public void update(Arena arena) throws Exception {
-        Connection connection= DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection= DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement ps = connection.prepareStatement("UPDATE arenas SET name = ? WHERE id = ?");
         ps.setString(1, arena.getName());
         ps.setInt(2, arena.getIdArena());
@@ -36,7 +36,7 @@ public class ArenaDAO implements DAO <Arena, Integer> {
 
     @Override
     public Arena get(Integer id) throws Exception {
-        Connection connection= DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection= DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         Arena arena = null;
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM arenas WHERE id = ?");
         ps.setInt(1, id);
@@ -56,7 +56,7 @@ public class ArenaDAO implements DAO <Arena, Integer> {
 
     @Override
     public ArrayList<Arena> getAll() throws Exception {
-        Connection connection= DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection= DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         ArrayList<Arena> arenas = new ArrayList<>();
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM arenas");
         ResultSet rs = ps.executeQuery();
@@ -74,7 +74,7 @@ public class ArenaDAO implements DAO <Arena, Integer> {
 
 
     public int getNextId() throws Exception{
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         String query = "SELECT MAX(id) FROM arenas";
         PreparedStatement statement = connection.prepareStatement(query);
         ResultSet rs = statement.executeQuery();

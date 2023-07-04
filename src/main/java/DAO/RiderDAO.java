@@ -12,7 +12,7 @@ public class RiderDAO implements DAO<Rider, String> {
     }
 
     public void add(Rider rider) throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement addRider = connection.prepareStatement("INSERT INTO rider (fiscalCode, firstName, lastName, horse) VALUES (?, ?, ?, ?)");
         addRider.setString(1, rider.getFiscalCod());
         addRider.setString(2, rider.getFirstName());
@@ -25,7 +25,7 @@ public class RiderDAO implements DAO<Rider, String> {
 
     @Override
     public void update(Rider rider) throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement updateRider = connection.prepareStatement("UPDATE riders SET firstName, lastName, horse WHERE fiscalCode = ?");
         updateRider.setString(1, rider.getFirstName());
         updateRider.setString(2, rider.getLastName());
@@ -38,7 +38,7 @@ public class RiderDAO implements DAO<Rider, String> {
 
     @Override
     public void remove(String fisCod) throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement deleteRider = connection.prepareStatement("DELETE FROM riders WHERE fiscalCode = ?");
         deleteRider.setString(1, fisCod);
         deleteRider.executeUpdate();
@@ -47,7 +47,7 @@ public class RiderDAO implements DAO<Rider, String> {
     }
 
     public Rider get(String fisCod) throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement getRider = connection.prepareStatement("SELECT * FROM riders WHERE fiscalCode = ?");
         getRider.setString(1, fisCod);
         ResultSet rs = getRider.executeQuery();
@@ -62,7 +62,7 @@ public class RiderDAO implements DAO<Rider, String> {
     }
 
     public ArrayList<Rider> getAll() throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         Statement getAllRiders = connection.createStatement();
         ResultSet rs = getAllRiders.executeQuery("SELECT * FROM riders");
         ArrayList<Rider> riders = new ArrayList<>();

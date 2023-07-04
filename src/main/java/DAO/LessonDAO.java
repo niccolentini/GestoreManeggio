@@ -25,7 +25,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
 
     @Override
     public void add(Lesson lesson) throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement statement = connection.prepareStatement("INSERT INTO lessons ( arena, trainer, date, time) VALUES (?,?,?,?,?)");
         //id is auto-generated, so it's not needed
         statement.setInt(1, lesson.getArena().getIdArena());
@@ -40,7 +40,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
 
     @Override
     public void update(Lesson lesson) throws SQLException{
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement statement = connection.prepareStatement("UPDATE lessons SET arena = ?, trainer = ?, date = ?, time = ? WHERE id = ?");
         statement.setInt(1, lesson.getArena().getIdArena());
         statement.setString(2, lesson.getTrainer().getFiscalCod());
@@ -55,7 +55,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
 
     @Override
     public void remove(Integer lessonId) throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement statement = connection.prepareStatement("DELETE FROM lessons WHERE id = ?");
         statement.setInt(1, lessonId);
         statement.executeUpdate();
@@ -66,7 +66,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
 
     @Override
     public Lesson get(Integer lessonId) throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         Lesson lesson = null;
         PreparedStatement statement = connection.prepareStatement("SELECT * FROM lessons WHERE id = ?");
         statement.setInt(1, lessonId);
@@ -91,7 +91,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
 
     @Override
     public ArrayList<Lesson> getAll() throws Exception{
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("SELECT * FROM lessons");
         ArrayList<Lesson> lessons = new ArrayList<>();
@@ -113,7 +113,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
 
     public ArrayList<Rider> getRidersForLesson(Integer lessonId) throws Exception {
 
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         String query = "SELECT * FROM bookings WHERE lesson = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setInt(1, lessonId);
@@ -127,7 +127,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
     }
 
     public ArrayList<Lesson> getLessonsForRider(String fiscalCode) throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         String query = "SELECT * FROM bookings WHERE rider = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setString(1, fiscalCode);
@@ -141,7 +141,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
     }
 
     public void addRiderToLesson(String fiscalCode, Integer lessonId) throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         String query = "INSERT OR IGNORE INTO bookings (lesson, rider) VALUES (?, ?)";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setInt(1, lessonId);
@@ -152,7 +152,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
     }
 
     public boolean removeRiderFromLesson(String fiscalCode, Integer lessonId) throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         String query = "DELETE FROM bookings WHERE lesson = ? AND rider = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setInt(1, lessonId);
@@ -165,7 +165,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
 
     public boolean isArenaBookedForLesson(int idArena) throws Exception {
         //restituisce true se l'arena è prenotata per almeno una lezione
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         String query = "SELECT * FROM lessons WHERE arena = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setInt(1, idArena);
@@ -179,7 +179,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
 
     public boolean isArenaBookedAtTimeDate(int idArena, LocalDate date, LocalTime time) throws Exception {
         //restituisce true se l'arena è prenotata per quella data e ora
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         String query = "SELECT * FROM lessons WHERE arena = ? AND date = ? AND time = ?";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setInt(1, idArena);
@@ -194,7 +194,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
     }
 
     public int getNextId() throws Exception{
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         String query = "SELECT MAX(id) FROM lessons";
         PreparedStatement statement = connection.prepareStatement(query);
         ResultSet rs = statement.executeQuery();

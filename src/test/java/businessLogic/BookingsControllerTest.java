@@ -43,7 +43,7 @@ class BookingsControllerTest {
             resultStringBuilder.append(line).append("\n");
         }
 
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         Statement stmt = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db").createStatement();
         int row = stmt.executeUpdate(resultStringBuilder.toString());
 
@@ -54,7 +54,7 @@ class BookingsControllerTest {
 
     @BeforeEach
     public void initDb() throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         // Delete data from all tables
         List<String> tables = Arrays.asList("trainers", "lessons", "riders", "memberships", "bookings");
         for (String table : tables) connection.prepareStatement("DELETE FROM " + table).executeUpdate();

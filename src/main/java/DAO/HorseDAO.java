@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class HorseDAO implements DAO<Horse, Integer> {
     @Override
     public void add(Horse horse) throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement insertHorse = connection.prepareStatement("INSERT INTO horses (id, name, info) VALUES (?, ?, ?)");
         insertHorse.setInt(1, horse.getHorseId());
         insertHorse.setString(2, horse.getName());
@@ -22,7 +22,7 @@ public class HorseDAO implements DAO<Horse, Integer> {
 
     @Override
     public void update(Horse horse) throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement updateHorse = connection.prepareStatement("UPDATE memberships SET name, info WHERE horse = ?");
         updateHorse.setString(1, horse.getName());
         updateHorse.setString(2, horse.getInfo());
@@ -34,7 +34,7 @@ public class HorseDAO implements DAO<Horse, Integer> {
 
     @Override
     public void remove(Integer integer) throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement deleteHorse = connection.prepareStatement("DELETE FROM horses WHERE id = ?");
         deleteHorse.setInt(1, integer);
         deleteHorse.executeUpdate();
@@ -44,7 +44,7 @@ public class HorseDAO implements DAO<Horse, Integer> {
 
     @Override
     public Horse get(Integer integer) throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement getHorse = connection.prepareStatement("SELECT * FROM horses WHERE id = ?");
         getHorse.setInt(1, integer);
         ResultSet rs = getHorse.executeQuery();
@@ -60,7 +60,7 @@ public class HorseDAO implements DAO<Horse, Integer> {
 
     @Override
     public ArrayList<Horse> getAll() throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         PreparedStatement getHorses = connection.prepareStatement("SELECT * FROM horses");
         ResultSet rs = getHorses.executeQuery();
         ArrayList<Horse> horses = new ArrayList<>();
