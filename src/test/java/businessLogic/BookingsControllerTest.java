@@ -59,7 +59,20 @@ class BookingsControllerTest {
        this.arenasController = new ArenasController(arenaDAO, lessonDAO);
        this.lessonsController = new LessonsController(lessonDAO, trainersController, arenasController);
 
-       // create test data
+    }
+
+    @BeforeEach
+    public void resetDatabase() throws SQLException {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        // Delete data from all tables
+        List<String> tables = Arrays.asList("trainers", "lessons", "riders", "memberships", "bookings");
+        for (String table : tables) connection.prepareStatement("DELETE FROM " + table).executeUpdate();
+
+        // Reset autoincrement counters
+        connection.prepareStatement("DELETE FROM sqlite_sequence").executeUpdate();
+        connection.close();
+
+        // create test data
         Horse testHorse1 = new Horse(1, "testHorse1", "fieno");
         Horse testHorse2 = new Horse(2, "testHorse2", "carote");
         Horse testHorse3 = new Horse(3, "testHorse3", "mela");
@@ -73,20 +86,6 @@ class BookingsControllerTest {
         arenasController.addArena("Dante");
         lessonsController.addLesson(1, "LUCPAL22", LocalDate.now(), LocalTime.now());
         lessonsController.addLesson(1, "LUCPAL22", LocalDate.now(), LocalTime.now());
-
-
-    }
-
-    @BeforeEach
-    public void resetDatabase() throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
-        // Delete data from all tables
-        List<String> tables = Arrays.asList("trainers", "lessons", "riders", "memberships", "bookings");
-        for (String table : tables) connection.prepareStatement("DELETE FROM " + table).executeUpdate();
-
-        // Reset autoincrement counters
-        connection.prepareStatement("DELETE FROM sqlite_sequence").executeUpdate();
-        connection.close();
     }
 
     @Test
