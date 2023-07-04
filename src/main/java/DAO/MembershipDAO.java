@@ -4,10 +4,6 @@ import main.java.DomainModel.Membership.*;
 import java.sql.*;
 
 public class MembershipDAO {
-    private Connection connection;
-    public MembershipDAO(Connection connection) {
-        this.connection = connection;
-    }
     public Membership get(String fiscalCode) throws SQLException {
         Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM memberships WHERE rider = ?");
