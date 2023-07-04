@@ -3,6 +3,7 @@ package test.java.businessLogic;
 import main.java.BusinessLogic.*;
 import main.java.DAO.*;
 import main.java.DomainModel.Horse;
+import main.java.DomainModel.Lesson;
 import main.java.DomainModel.Rider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,10 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -29,12 +28,13 @@ class BookingsControllerTest {
     private ArenasController arenasController;
     private int testLesson1Id;
     private int testLesson2Id;
-    Rider testRider1;
-    Rider testRider2;
-    Rider testRider3;
+    private Rider testRider1;
+    private Rider testRider2;
+    private Rider testRider3;
+    private Rider testRider4;
 
     @BeforeAll
-    public void initDb() throws Exception {
+    static void setUpDb() throws Exception {
         // Set up database
         StringBuilder resultStringBuilder = new StringBuilder();
         BufferedReader br = new BufferedReader(new FileReader("src/main/resources/schema.sql"));
@@ -53,7 +53,7 @@ class BookingsControllerTest {
     }
 
     @BeforeEach
-    public void resetDatabase() throws Exception {
+    public void initDb() throws Exception {
         Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
         // Delete data from all tables
         List<String> tables = Arrays.asList("trainers", "lessons", "riders", "memberships", "bookings");
@@ -75,20 +75,26 @@ class BookingsControllerTest {
         this.trainersController = new TrainersController(trainerDAO);
         this.arenasController = new ArenasController(arenaDAO, lessonDAO);
         this.lessonsController = new LessonsController(lessonDAO, trainersController, arenasController);
+        this.ridersController = new RidersController(riderDAO);
+        this.bookingsController = new BookingsController(lessonDAO, lessonsController, ridersController , membershipDAO);
 
         // create test data
         Horse testHorse1 = new Horse(1, "testHorse1", "fieno");
         Horse testHorse2 = new Horse(2, "testHorse2", "carote");
         Horse testHorse3 = new Horse(3, "testHorse3", "mela");
+        Horse testHorse4 = new Horse(4, "testHorse4", "zucchine");
         testRider1 = new Rider("PEPPEP12", "Peppe", "Peppe", testHorse1);
         testRider2 = new Rider("MARPOI11", "Marco", "Poi", testHorse2);
         testRider3 = new Rider("REIEII33", "Renzo", "Verza", testHorse3);
+        testRider4 = new Rider("GIOGIO44", "Giorgio", "Giorgio", testHorse4);
         horseDAO.add(testHorse1);
         horseDAO.add(testHorse2);
         horseDAO.add(testHorse3);
-        ridersController.addRider("PEPPEP12", "Peppe", "Peppe", testHorse1, 2);
-        ridersController.addRider("MARPOI11", "Marco", "Poi", testHorse2, 3);
-        ridersController.addRider("REIEII33", "Renzo", "Verza", testHorse3, 1);
+        horseDAO.add(testHorse4);
+        ridersController.addRider("PEPPEP12", "Peppe", "Peppe", testHorse1, 1);
+        ridersController.addRider("MARPOI11", "Marco", "Poi", testHorse2, 2);
+        ridersController.addRider("REIEII33", "Renzo", "Verza", testHorse3, 3);
+        ridersController.addRider("GIOGIO44", "Giorgio", "Giorgio", testHorse4, 4);
         trainersController.addTrainer("LUCPAL22", "Luca", "Paoli");
         arenasController.addArena("Dante");
         lessonsController.addLesson(1, "LUCPAL22", LocalDate.now(), LocalTime.now());
@@ -109,17 +115,48 @@ class BookingsControllerTest {
 
     @Test
     public void Remove_rider_test() throws Exception { //testare la rimozione di un rider da una lezione
-        // TODO
+        bookingsController.addRiderToLesson(testRider1.getFiscalCod(), testLesson1Id);
+        if(bookingsController.getLessonsForRider(testRider1.getFiscalCod()).size() == 0) throw new Exception("Rider not added to lesson");
+        else {
+            bookingsController.removeRiderFromLesson(testRider1.getFiscalCod(), testLesson1Id);
+            Assertions.assertEquals(0, bookingsController.getLessonsForRider(testRider1.getFiscalCod()).size());
+        }
     }
 
     @Test
     public void Add_rider_test() throws Exception { //testare l'aggiunta di un rider ad una lezione
-        // TODO
+        bookingsController.addRiderToLesson(testRider1.getFiscalCod(), testLesson1Id);
+        Lesson l = bookingsController.getLessonsForRider(testRider1.getFiscalCod()).get(0);
+        Assertions.assertEquals(1, l.getLessonId());
     }
 
     @Test
     public void Add_rider_fullClass_test() throws Exception { //testare l'aggiunta di un rider ad una lezione piena
-        // TODO
+        bookingsController.addRiderToLesson(testRider1.getFiscalCod(), testLesson1Id);
+        bookingsController.addRiderToLesson(testRider2.getFiscalCod(), testLesson1Id);
+        bookingsController.addRiderToLesson(testRider3.getFiscalCod(), testLesson1Id);
+        Assertions.assertThrows(
+                RuntimeException.class,
+                () -> bookingsController.addRiderToLesson(testRider4.getFiscalCod(), testLesson1Id),
+                "Expected RuntimeException to be thrown but it wasn't"
+        );
+    }
+
+    @Test
+    public void Add_rider_notExisting_test() throws Exception { //testare l'aggiunta di un rider ad una lezione che non esiste
+        Assertions.assertThrows(
+                RuntimeException.class,
+                () -> bookingsController.addRiderToLesson(testRider1.getFiscalCod(), 100),
+                "Expected RuntimeException to be thrown but it wasn't"
+        );
+    }
+
+    @Test
+    public void Add_rider_to_multiple_lessons() throws Exception {
+        bookingsController.addRiderToLesson(testRider1.getFiscalCod(), testLesson1Id);
+        bookingsController.addRiderToLesson(testRider1.getFiscalCod(), testLesson2Id);
+        List<Lesson> lessons = bookingsController.getLessonsForRider(testRider1.getFiscalCod());
+        Assertions.assertEquals(2, lessons.size());
     }
 
 
