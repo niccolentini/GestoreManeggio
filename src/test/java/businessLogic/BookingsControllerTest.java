@@ -134,6 +134,7 @@ class BookingsControllerTest {
         ridersController.addRider("GIOGIO44", "Giorgio", "Giorgio", testHorse4, 4);
         trainersController.addTrainer("LUCPAL22", "Luca", "Paoli");
         arenasController.addArena("Dante");
+        arenasController.addArena("Alighieri");
         lessonsController.addLesson(1, "LUCPAL22", LocalDate.now(), LocalTime.now());
         lessonsController.addLesson(2, "LUCPAL22", LocalDate.now(), LocalTime.now().plusHours(2));
         testLesson1Id = 1;

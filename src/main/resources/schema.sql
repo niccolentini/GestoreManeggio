@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS lessons
     trainer      TEXT    NOT NULL,
     date         TEXT    NOT NULL,
     time         TEXT    NOT NULL,
-    FOREIGN KEY (trainer) REFERENCES trainers (fiscal_code) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (trainer) REFERENCES trainers (fiscalCode) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (arena) REFERENCES arenas (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS bookings
     rider    TEXT NOT NULL,
     lesson   INTEGER NOT NULL,
     PRIMARY KEY (rider, lesson),
-    FOREIGN KEY (rider) REFERENCES riders (fiscalCode) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (rider) REFERENCES riders (fiscalCode) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (lesson) REFERENCES lessons (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
