@@ -176,6 +176,4 @@ public class LessonDAOTest {
         Assertions.assertTrue(lessonDAO.isArenaBookedAtTimeDate(1, LocalDate.now(), LocalTime.now()));
         Assertions.assertFalse(lessonDAO.isArenaBookedAtTimeDate(2, LocalDate.now(), LocalTime.now()));
     }
-
-
 }
