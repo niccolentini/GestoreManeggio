@@ -2,7 +2,6 @@ package test.java.businessLogic;
 
 import main.java.BusinessLogic.ArenasController;
 import main.java.DAO.*;
-import main.java.DomainModel.Trainer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +27,7 @@ public class ArenasControllerTest {
     ArenasController arenasController = new ArenasController(arenaDAO, lessonDAO);
 
     @BeforeAll
-    public int setUpDb() throws SQLException, IOException {
+    static void setUpDb() throws SQLException, IOException {
         // Set up database
         StringBuilder resultStringBuilder = new StringBuilder();
         BufferedReader br = new BufferedReader(new FileReader("src/main/resources/schema.sql"));
@@ -39,11 +38,11 @@ public class ArenasControllerTest {
 
         Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
         Statement stmt = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db").createStatement();
-        int row = stmt.executeUpdate(resultStringBuilder.toString());
+        stmt.executeUpdate(resultStringBuilder.toString());
 
         stmt.close();
         connection.close();
-        return row;
+
     }
 
     @BeforeEach
@@ -73,7 +72,7 @@ public class ArenasControllerTest {
     }
 
     @Test
-    public void testDisableArenaFail() throws Exception{
+    public void testDisableArenaFail(){
         Assertions.assertThrows(Exception.class, () -> arenasController.disableArena(3));
     }
 
@@ -85,12 +84,12 @@ public class ArenasControllerTest {
     }
 
     @Test
-    public void testEnableArenaFail() throws Exception{
+    public void testEnableArenaFail() {
         Assertions.assertThrows(Exception.class, () -> arenasController.enableArena(1)); //already available
     }
 
     @Test
-    public void testDisableArenaBookedForLessons() throws Exception{
+    public void testDisableArenaBookedForLessons() {
         Assertions.assertThrows(Exception.class, () -> arenasController.disableArena(2));
     }
 }

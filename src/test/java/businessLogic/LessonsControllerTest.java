@@ -48,7 +48,7 @@ public class LessonsControllerTest {
 
         Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
         Statement stmt = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db").createStatement();
-        int row = stmt.executeUpdate(resultStringBuilder.toString());
+        stmt.executeUpdate(resultStringBuilder.toString());
 
         stmt.close();
         connection.close();
@@ -77,13 +77,13 @@ public class LessonsControllerTest {
     }
 
     @Test
-    public void testAddLessonArenaNotAvailable() throws Exception{
+    public void testAddLessonArenaNotAvailable(){
         //arena 2 is not available
         Assertions.assertThrows(Exception.class, () -> lessonsController.addLesson(2, "AAAAAA11", LocalDate.now(), LocalTime.now().plusHours(2)));
     }
 
     @Test
-    public void testAddLessonArenaBooked() throws Exception{
+    public void testAddLessonArenaBooked() {
         //arena 1 is available but booked at this time and date
         Assertions.assertThrows(Exception.class, () -> lessonsController.addLesson(1, "AAAAAA11", LocalDate.now(), LocalTime.now().plusHours(1)));
     }

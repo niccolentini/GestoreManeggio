@@ -1,7 +1,5 @@
 package test.java.dao;
 
-import main.java.BusinessLogic.BookingsController;
-import main.java.BusinessLogic.LessonsController;
 import main.java.DAO.*;
 import main.java.DomainModel.*;
 import org.junit.jupiter.api.Assertions;
@@ -20,7 +18,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 public class LessonDAOTest {
@@ -33,7 +30,7 @@ public class LessonDAOTest {
 
 
     @BeforeAll
-    public int setUpDb() throws SQLException, IOException {
+    static void setUpDb() throws SQLException, IOException {
         // Set up database
         StringBuilder resultStringBuilder = new StringBuilder();
         BufferedReader br = new BufferedReader(new FileReader("src/main/resources/schema.sql"));
@@ -44,11 +41,10 @@ public class LessonDAOTest {
 
         Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
         Statement stmt = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db").createStatement();
-        int row = stmt.executeUpdate(resultStringBuilder.toString());
+        stmt.executeUpdate(resultStringBuilder.toString());
 
         stmt.close();
         connection.close();
-        return row;
     }
 
     @BeforeEach
@@ -110,7 +106,7 @@ public class LessonDAOTest {
     }
 
     @Test
-    public void testRemoveFail() throws Exception {
+    public void testRemoveFail() {
         Assertions.assertThrows(Exception.class, () -> lessonDAO.remove(3));
     }
 
@@ -151,7 +147,7 @@ public class LessonDAOTest {
     }
 
     @Test
-    public void testAddRiderToLessonFail() throws Exception{
+    public void testAddRiderToLessonFail() {
         Assertions.assertThrows(Exception.class, () -> lessonDAO.addRiderToLesson("BBBBBB11", 1)); //rider già presente nella lezione
         Assertions.assertThrows(Exception.class, () -> lessonDAO.addRiderToLesson("BBBBBB11", 3)); //lezione non presente nel db
     }
@@ -163,7 +159,7 @@ public class LessonDAOTest {
     }
 
     @Test
-    public void testRemoveRiderFromLessonFail() throws Exception{
+    public void testRemoveRiderFromLessonFail() {
         Assertions.assertThrows(Exception.class, () -> lessonDAO.removeRiderFromLesson("BBBBBB11", 2)); //rider non presente nella lezione
     }
 
