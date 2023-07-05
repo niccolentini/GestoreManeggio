@@ -19,6 +19,7 @@ public class RidersController {
     public void addRider(String fiscalcod, String fstName, String lstname, Horse horse, int membership) throws SQLException {
         Rider rider = new Rider(fiscalcod, fstName, lstname, horse);
         Membership m = new BoxPack();
+        rider.setMembership(m);
         if (membership == 1){
             rider.setMembership(new LessonsPack(m));
         }
@@ -26,8 +27,6 @@ public class RidersController {
             rider.setMembership(new GroomPack(m));
         } else if (membership == 3) {
             rider.setMembership(new LessonsPack(new GroomPack(m)));
-        } else {
-            rider.setMembership(m);
         }
         riderDAO.add(rider);
     }

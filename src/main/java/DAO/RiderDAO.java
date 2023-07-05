@@ -52,14 +52,14 @@ public class RiderDAO implements DAO<Rider, String> {
         getRider.setString(1, fisCod);
         ResultSet rs = getRider.executeQuery();
         Rider r = null;
-        if(rs.next()){
+        if (rs.next()) {
             r = new Rider(rs.getString("fiscalCode"), rs.getString("firstName"), rs.getString("lastName"), horseDAO.get(rs.getInt("horse")));
         }
-        getRider.executeUpdate();
         getRider.close();
         connection.close();
         return r;
     }
+
 
     public ArrayList<Rider> getAll() throws Exception {
         Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");

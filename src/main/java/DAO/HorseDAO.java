@@ -49,14 +49,14 @@ public class HorseDAO implements DAO<Horse, Integer> {
         getHorse.setInt(1, integer);
         ResultSet rs = getHorse.executeQuery();
         Horse h = null;
-        if(rs.next()){
+        if (rs.next()) {
             h = new Horse(rs.getInt("id"), rs.getString("name"), rs.getString("info"));
         }
-        getHorse.executeUpdate();
         getHorse.close();
         connection.close();
         return h;
     }
+
 
     @Override
     public ArrayList<Horse> getAll() throws Exception {
