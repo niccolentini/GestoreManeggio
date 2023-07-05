@@ -11,9 +11,10 @@ public class ArenaDAO implements DAO <Arena, Integer> {
     @Override
     public void add(Arena arena) throws Exception {
         Connection connection= DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
-        PreparedStatement ps = connection.prepareStatement("INSERT INTO arenas (name) VALUES (?)");
+        PreparedStatement ps = connection.prepareStatement("INSERT INTO arenas (name, available) VALUES (?, ?)");
         //id is auto-incremented, so it's not needed
         ps.setString(1, arena.getName());
+        ps.setString(2, "TRUE");
         ps.executeUpdate();
         ps.close();
         connection.close();

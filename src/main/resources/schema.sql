@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS riders
 (
     fiscalCode      TEXT PRIMARY KEY,
     firstName        TEXT NOT NULL,
-    lastName     TEXT NOT NULL
-    horse       INTEGER NOT NULL
+    lastName     TEXT NOT NULL,
+    horse       INTEGER NOT NULL,
     FOREIGN KEY (horse) REFERENCES horses (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS trainers
 (
     fiscalCode       TEXT PRIMARY KEY,
     firstName        TEXT NOT NULL,
-    lastName         TEXT NOT NULL,
+    lastName         TEXT NOT NULL
 );
 
 -- Table: lessons
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS arenas
 );
 
 -- Table: horsesBoxes
-CREATE TABLE IF NOT EXISTS horsesBoxes
+CREATE TABLE IF NOT EXISTS horseBoxes
 (
     box INTEGER PRIMARY KEY AUTOINCREMENT,
     horse INTEGER NOT NULL,

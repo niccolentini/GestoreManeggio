@@ -40,17 +40,54 @@ class BookingsControllerTest {
         BufferedReader br = new BufferedReader(new FileReader("src/main/resources/schema.sql"));
         String line;
         while ((line = br.readLine()) != null) {
-            resultStringBuilder.append(line).append("\n");
+         resultStringBuilder.append(line).append("\n");
         }
-
         Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         Statement stmt = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db").createStatement();
-        int row = stmt.executeUpdate(resultStringBuilder.toString());
-
+        int row = stmt.executeUpdate(resultStringBuilder.toString()); //fixme qui dà errore "near horse" se lo levi ti dà errore su trainers
         stmt.close();
         connection.close();
 
     }
+
+    public static void createDatabaseFromSchema(String schemaFilePath, String databaseName) {
+        String url = "jdbc:sqlite:" + databaseName;
+
+        try (Connection conn = DriverManager.getConnection(url)) {
+            // Create an empty database file if it doesn't exist
+            conn.createStatement().execute("CREATE TABLE IF NOT EXISTS dummy_table (id INTEGER)");
+
+            // Read and execute the schema file
+            try (BufferedReader reader = new BufferedReader(new FileReader(schemaFilePath));
+                 Statement stmt = conn.createStatement()) {
+                String line;
+                StringBuilder sb = new StringBuilder();
+                while ((line = reader.readLine()) != null) {
+                    // Remove leading/trailing white spaces and skip empty lines
+                    line = line.trim();
+                    if (line.isEmpty()) {
+                        continue;
+                    }
+
+                    // Append the line to the SQL statement
+                    sb.append(line);
+
+                    // If the line ends with a semicolon, execute the statement
+                    if (line.endsWith(";")) {
+                        String sql = sb.toString();
+                        stmt.execute(sql);
+                        sb.setLength(0); // Clear the StringBuilder for the next statement
+                    }
+                }
+                System.out.println("Database structure updated successfully.");
+            } catch (Exception e) {
+                System.err.println("Error updating database structure: " + e.getMessage());
+            }
+        } catch (Exception e) {
+            System.err.println("Error connecting to database: " + e.getMessage());
+        }
+    }
+
 
     @BeforeEach
     public void initDb() throws Exception {

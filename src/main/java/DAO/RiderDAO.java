@@ -13,7 +13,7 @@ public class RiderDAO implements DAO<Rider, String> {
 
     public void add(Rider rider) throws SQLException {
         Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
-        PreparedStatement addRider = connection.prepareStatement("INSERT INTO rider (fiscalCode, firstName, lastName, horse) VALUES (?, ?, ?, ?)");
+        PreparedStatement addRider = connection.prepareStatement("INSERT INTO riders (fiscalCode, firstName, lastName, horse) VALUES (?, ?, ?, ?)");
         addRider.setString(1, rider.getFiscalCod());
         addRider.setString(2, rider.getFirstName());
         addRider.setString(3, rider.getLastName());

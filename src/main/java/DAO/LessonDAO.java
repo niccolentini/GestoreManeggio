@@ -26,7 +26,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
     @Override
     public void add(Lesson lesson) throws SQLException {
         Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
-        PreparedStatement statement = connection.prepareStatement("INSERT INTO lessons ( arena, trainer, date, time) VALUES (?,?,?,?,?)");
+        PreparedStatement statement = connection.prepareStatement("INSERT INTO lessons ( arena, trainer, date, time) VALUES (?,?,?,?)");
         //id is auto-generated, so it's not needed
         statement.setInt(1, lesson.getArena().getIdArena());
         statement.setString(2, lesson.getTrainer().getFiscalCod());
