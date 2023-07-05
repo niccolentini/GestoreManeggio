@@ -57,9 +57,11 @@ public class LessonDAOTest {
         lessonDAO = new LessonDAO(arenaDAO, riderDAO, trainerDAO);
 
         // Delete data from lessons table
-        List<String> tables = Arrays.asList("trainers", "lessons", "riders", "horses", "bookings");
+        List<String> tables = Arrays.asList("trainers", "lessons", "riders", "horses", "bookings", "arenas");
         for (String table : tables) connection.prepareStatement("DELETE FROM " + table).executeUpdate();
 
+        // Reset autoincrement counters
+        connection.prepareStatement("DELETE FROM sqlite_sequence").executeUpdate();
 
         //Insert some test data
         connection.prepareStatement("INSERT INTO arenas (id, name, avaiable) VALUES (1, 'name1', true)").executeUpdate();
@@ -71,7 +73,7 @@ public class LessonDAOTest {
         connection.prepareStatement("INSERT INTO riders (fiscalCode, firstName, lastName, horse) VALUES ('BBBBBB11', 'name1', 'surname1', 1)").executeUpdate();
         connection.prepareStatement("INSERT INTO bookings (rider, lesson) VALUES ('BBBBBB11', '1')").executeUpdate(); //aggiunto rider BBBBBB11 alla lezione 1
 
-        connection.close();
+        connection.close();  //fixme va bene chiuderla dopo?
     }
 
     @Test
