@@ -26,9 +26,10 @@ public class ArenasController {
         Arena arena = arenaDAO.get(idArena);
         if(arena==null) {throw new Exception("L'arena selezionata non esiste.");}
 
-        if(!arena.isAvailable()) { throw new Exception("L'arena selezionata risulta già disabilitata.");}
+        if(arena.isAvailable() == 0) { throw new Exception("L'arena selezionata risulta già disabilitata.");}
         if(lessonDAO.isArenaBookedForLesson(idArena)) { throw new Exception("L'arena selezionata non può essere disabilitata in quanto ci sono lezioni prenotate.");}
-        arena.setAvailable(false);
+        int a = 0;
+        arena.setAvailable(a);
         arenaDAO.update(arena);
     }
 
@@ -36,8 +37,8 @@ public class ArenasController {
         Arena arena = arenaDAO.get(idArena);
         if(arena==null) {throw new IllegalArgumentException("L'arena selezionata non esiste.");}
 
-        if(arena.isAvailable()) { throw new IllegalArgumentException("L'arena selezionata risulta già abilitata.");}
-        arena.setAvailable(true);
+        if(arena.isAvailable() == 1) { throw new IllegalArgumentException("L'arena selezionata risulta già abilitata.");}
+        arena.setAvailable(1);
         arenaDAO.update(arena);
     }
 

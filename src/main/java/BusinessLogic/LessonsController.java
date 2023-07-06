@@ -29,7 +29,7 @@ public class LessonsController implements Subject {
         //check if the arena is available and not booked for this date and time
         Arena arena = arenaController.getArena(idArena);
         if(arena == null) { throw new IllegalArgumentException("Arena not found");}
-        if(!arena.isAvailable()) { throw new IllegalArgumentException("Arena not available"); }
+        if(arena.isAvailable() == 0) { throw new IllegalArgumentException("Arena not available"); }
         if(lessonDAO.isArenaBookedAtTimeDate(idArena, date, time)) { throw new IllegalArgumentException("Arena already booked at this time and date");}
 
         Lesson lesson = new Lesson(lessonDAO.getNextId(), arena, trainer, date, time);

@@ -73,8 +73,9 @@ CREATE TABLE IF NOT EXISTS arenas
 (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    available TEXT NOT NULL
+    available INTEGER NOT NULL CHECK(available IN (0, 1)) -- 0 = not available, 1 = available
 );
+
 
 -- Table: horsesBoxes
 CREATE TABLE IF NOT EXISTS horseBoxes

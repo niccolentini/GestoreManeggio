@@ -3,7 +3,7 @@ package main.java.DomainModel;
 public class Arena {
     private String name;
     private int idArena;
-    private boolean available = true;  //l'arena è sempre disponibile a meno che la segreteria non decida di disabilitarla
+    private int available = 1;  //l'arena è sempre disponibile a meno che la segreteria non decida di disabilitarla
 
 
     public Arena(String name, int idArena) {
@@ -19,11 +19,11 @@ public class Arena {
         return idArena;
     }
 
-    public void setAvailable(boolean b){
-        this.available = b;
+    public void setAvailable(int a){
+        this.available = a;
     }
 
-    public boolean isAvailable() {
+    public int isAvailable() {
         return available;
     }
 

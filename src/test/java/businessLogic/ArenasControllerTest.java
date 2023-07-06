@@ -10,10 +10,9 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,8 +35,8 @@ public class ArenasControllerTest {
             resultStringBuilder.append(line).append("\n");
         }
 
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
-        Statement stmt = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db").createStatement();
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:maneggio.db");
+        Statement stmt = DriverManager.getConnection("jdbc:sqlite:maneggio.db").createStatement();
         stmt.executeUpdate(resultStringBuilder.toString());
 
         stmt.close();
@@ -47,20 +46,47 @@ public class ArenasControllerTest {
 
     @BeforeEach
     public void initDb() throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:maneggio.db");
 
         // Delete data from lessons table
         List<String> tables = Arrays.asList("trainers", "lessons", "riders", "horses", "bookings");
-        for (String table : tables) connection.prepareStatement("DELETE FROM " + table).executeUpdate();
+        for (String table : tables) {
+            connection.prepareStatement("DELETE FROM " + table).executeUpdate();
+        }
 
         // Reset autoincrement counters
         connection.prepareStatement("DELETE FROM sqlite_sequence").executeUpdate();
 
-        //Insert some test data
-        connection.prepareStatement("INSERT INTO arenas (id, name, avaiable) VALUES (1, 'name1', true)").executeUpdate();
-        connection.prepareStatement("INSERT INTO arenas (id, name, avaiable) VALUES (2, 'name2', true)").executeUpdate();
-        connection.prepareStatement("INSERT INTO trainers (fiscalCode, firstName, lastName) VALUES ('AAAAAA11', 'name1', 'surname1')").executeUpdate();
-        connection.prepareStatement("INSERT INTO lessons (id, arena, trainer, date, time) VALUES (1, 2, 'AAAAAA11',  LocalDate.now(), LocalTime.now())").executeUpdate();
+        // Insert some test data
+        LocalDate currentDate = LocalDate.now();
+        LocalTime currentTime = LocalTime.now();
+
+        String insertArenaQuery = "INSERT INTO arenas (name, available) VALUES (?, ?)";
+        PreparedStatement insertArenaStatement = connection.prepareStatement(insertArenaQuery);
+        insertArenaStatement.setString(1, "name1");
+        insertArenaStatement.setInt(2, 1);
+        insertArenaStatement.executeUpdate();
+
+        insertArenaStatement.setString(1, "name2");
+        insertArenaStatement.setInt(2, 1);
+        insertArenaStatement.executeUpdate();
+
+        String insertTrainerQuery = "INSERT INTO trainers (fiscalCode, firstName, lastName) VALUES (?, ?, ?)";
+        PreparedStatement insertTrainerStatement = connection.prepareStatement(insertTrainerQuery);
+        insertTrainerStatement.setString(1, "AAAAAA11");
+        insertTrainerStatement.setString(2, "name1");
+        insertTrainerStatement.setString(3, "surname1");
+        insertTrainerStatement.executeUpdate();
+
+        String insertLessonQuery = "INSERT INTO lessons (id, arena, trainer, date, time) VALUES (?, ?, ?, ?, ?)";
+        PreparedStatement insertLessonStatement = connection.prepareStatement(insertLessonQuery);
+        insertLessonStatement.setInt(1, 1);
+        insertLessonStatement.setInt(2, 2);
+        insertLessonStatement.setString(3, "AAAAAA11");
+        insertLessonStatement.setString(4, currentDate.toString());
+        insertLessonStatement.setString(5, currentTime.toString());
+        insertLessonStatement.executeUpdate();
+
         connection.close();
     }
 
@@ -68,7 +94,7 @@ public class ArenasControllerTest {
     @Test
     public void testDisableArenaSuccess() throws Exception{
         arenasController.disableArena(1);
-        Assertions.assertFalse(arenaDAO.get(1).isAvailable());
+        Assertions.assertNotEquals(1, arenaDAO.get(1).isAvailable());
     }
 
     @Test
@@ -80,7 +106,7 @@ public class ArenasControllerTest {
     public void testEnableArenaSuccess() throws Exception{
         arenasController.disableArena(1);
         arenasController.enableArena(1);
-        Assertions.assertTrue(arenaDAO.get(1).isAvailable());
+        Assertions.assertEquals(1, arenaDAO.get(1).isAvailable());
     }
 
     @Test
