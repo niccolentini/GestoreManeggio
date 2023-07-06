@@ -62,7 +62,6 @@ public class TrainerDAO implements DAO <Trainer, String> {
         }
         rs.close();
         ps.close();
-
         connection.close();
         return trainer;
     }

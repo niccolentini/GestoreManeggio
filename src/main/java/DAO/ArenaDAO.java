@@ -32,8 +32,15 @@ public class ArenaDAO implements DAO <Arena, Integer> {
     }
 
     @Override
-    public void remove(Integer id) {
+    public void remove(Integer id) throws Exception {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
+        PreparedStatement ps = connection.prepareStatement("DELETE FROM arenas WHERE id = ?");
+        ps.setInt(1, id);
+        ps.executeUpdate();
+        ps.close();
+        connection.close();
     }
+
 
     @Override
     public Arena get(Integer id) throws Exception {
@@ -50,7 +57,6 @@ public class ArenaDAO implements DAO <Arena, Integer> {
         }
         rs.close();
         ps.close();
-
         connection.close();
         return arena;
     }

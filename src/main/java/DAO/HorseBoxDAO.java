@@ -54,7 +54,6 @@ public class HorseBoxDAO implements DAO <HorseBox, Integer>{
         }
         rs.close();
         ps.close();
-
         connection.close();
         return box;
     }
@@ -72,7 +71,6 @@ public class HorseBoxDAO implements DAO <HorseBox, Integer>{
         }
         rs.close();
         ps.close();
-
         connection.close();
         return boxes;
     }
@@ -89,7 +87,6 @@ public class HorseBoxDAO implements DAO <HorseBox, Integer>{
         }
         rs.close();
         ps.close();
-
         connection.close();
         return box;
     }

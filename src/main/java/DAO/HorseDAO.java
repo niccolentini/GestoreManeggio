@@ -68,7 +68,6 @@ public class HorseDAO implements DAO<Horse, Integer> {
             Horse h = new Horse(rs.getInt("id"), rs.getString("name"), rs.getString("info"));
             horses.add(h);
         }
-        getHorses.executeUpdate();
         getHorses.close();
         connection.close();
         return horses;
