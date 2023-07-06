@@ -67,11 +67,11 @@ public class LessonsControllerTest {
         connection.prepareStatement("DELETE FROM sqlite_sequence").executeUpdate();
 
         //Insert some test data
-        connection.prepareStatement("INSERT INTO arenas (id, name, available) VALUES (1, 'name1', true)").executeUpdate();
-        connection.prepareStatement("INSERT INTO arenas (id, name, available) VALUES (2, 'name2', false)").executeUpdate();
+        connection.prepareStatement("INSERT INTO arenas (id, name, available) VALUES (1, 'name1', 1)").executeUpdate();
+        connection.prepareStatement("INSERT INTO arenas (id, name, available) VALUES (2, 'name2', 0)").executeUpdate();
         connection.prepareStatement("INSERT INTO trainers (fiscalCode, firstName, lastName) VALUES ('AAAAAA11', 'name1', 'surname1')").executeUpdate();
-        connection.prepareStatement("INSERT INTO lessons (id, arena, trainer, date, time) VALUES (1, 1, 'AAAAAA11',  LocalDate.now(), LocalTime.now())").executeUpdate();
-        connection.prepareStatement("INSERT INTO lessons (id, arena, trainer, date, time) VALUES (2, 1, 'AAAAAA11',  LocalDate.now(), LocalTime.now().plusHours(1))").executeUpdate();
+        connection.prepareStatement("INSERT INTO lessons (id, arena, trainer, date, time) VALUES (1, 1, 'AAAAAA11', '" + LocalDate.now() + "', '" + LocalTime.now() + "')").executeUpdate();
+        connection.prepareStatement("INSERT INTO lessons (id, arena, trainer, date, time) VALUES (2, 1, 'AAAAAA11', '" + LocalDate.now() + "', '" + LocalTime.now().plusHours(1) + "')").executeUpdate();
 
         connection.close();
     }
