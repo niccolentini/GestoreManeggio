@@ -201,17 +201,44 @@ public class LessonDAO implements DAO <Lesson, Integer> {
     }
 
 
-    public boolean removeRiderFromLesson(String fiscalCode, Integer lessonId) throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
-        String query = "DELETE FROM bookings WHERE lesson = ? AND rider = ?";
-        PreparedStatement statement = connection.prepareStatement(query);
-        statement.setInt(1, lessonId);
-        statement.setString(2, fiscalCode);
-        int result = statement.executeUpdate();
-        statement.close();
-        connection.close();
-        return result != 0;
+    public boolean removeRiderFromLesson(String fiscalCode, Integer lessonId) throws Exception, SQLException {
+        Connection connection = null;
+        PreparedStatement selectStatement = null;
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
+            // Verifica se l'ID della lezione esiste nel database
+            selectStatement = connection.prepareStatement("SELECT id FROM lessons WHERE id = ?");
+            selectStatement.setInt(1, lessonId);
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (!resultSet.next()) {
+                throw new Exception("Lesson not found with ID: " + lessonId);
+            }
+            // Verifica se il rider è presente nella lezione
+            selectStatement = connection.prepareStatement("SELECT rider FROM bookings WHERE lesson = ? AND rider = ?");
+            selectStatement.setInt(1, lessonId);
+            selectStatement.setString(2, fiscalCode);
+            resultSet = selectStatement.executeQuery();
+            if (!resultSet.next()) {
+                throw new Exception("Rider not found in the lesson: " + fiscalCode);
+            }
+            // Procedi con la rimozione del rider dalla lezione
+            PreparedStatement deleteStatement = connection.prepareStatement("DELETE FROM bookings WHERE lesson = ? AND rider = ?");
+            deleteStatement.setInt(1, lessonId);
+            deleteStatement.setString(2, fiscalCode);
+            int result = deleteStatement.executeUpdate();
+            deleteStatement.close();
+            return result != 0;
+        } finally {
+            if (selectStatement != null) {
+                selectStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
     }
+
 
     public boolean isArenaBookedForLesson(int idArena) throws Exception {
         //restituisce true se l'arena è prenotata per almeno una lezione
