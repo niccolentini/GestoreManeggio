@@ -93,7 +93,7 @@ class BookingsControllerTest {
     public void initDb() throws Exception {
         Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         // Delete data from all tables
-        List<String> tables = Arrays.asList("trainers", "lessons", "riders", "memberships", "bookings", "horses", "horseBoxes", "arenas");
+        List<String> tables = Arrays.asList("trainers", "lessons", "riders","memberships","bookings", "horses","horseboxes", "arenas", "sqlite_sequence");
         for (String table : tables) connection.prepareStatement("DELETE FROM " + table).executeUpdate();
 
         // Reset autoincrement counters

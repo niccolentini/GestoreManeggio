@@ -10,23 +10,28 @@ DROP TABLE IF EXISTS memberships;
 DROP TABLE IF EXISTS horses;
 DROP TABLE IF EXISTS arenas;
 DROP TABLE IF EXISTS horsesBoxes;
-
--- Table: riders
-CREATE TABLE IF NOT EXISTS riders
-(
-    fiscalCode      TEXT PRIMARY KEY,
-    firstName        TEXT NOT NULL,
-    lastName     TEXT NOT NULL,
-    horse       INTEGER NOT NULL,
-    FOREIGN KEY (horse) REFERENCES horses (id) ON UPDATE CASCADE ON DELETE CASCADE
-);
-
 -- Table: trainers
 CREATE TABLE IF NOT EXISTS trainers
 (
     fiscalCode       TEXT PRIMARY KEY,
     firstName        TEXT NOT NULL,
     lastName         TEXT NOT NULL
+);
+
+-- Table: horses
+CREATE TABLE IF NOT EXISTS horses
+(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    info TEXT NOT NULL
+);
+
+-- Table: arenas
+CREATE TABLE IF NOT EXISTS arenas
+(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    available INTEGER NOT NULL CHECK(available IN (0, 1)) -- 0 = not available, 1 = available
 );
 
 -- Table: lessons
@@ -40,6 +45,17 @@ CREATE TABLE IF NOT EXISTS lessons
     FOREIGN KEY (trainer) REFERENCES trainers (fiscalCode) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (arena) REFERENCES arenas (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+-- Table: riders
+CREATE TABLE IF NOT EXISTS riders
+(
+    fiscalCode      TEXT PRIMARY KEY,
+    firstName        TEXT NOT NULL,
+    lastName     TEXT NOT NULL,
+    horse       INTEGER NOT NULL,
+    FOREIGN KEY (horse) REFERENCES horses (id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 
 -- Table: bookings (many-to-many between lessons and riders)
 CREATE TABLE IF NOT EXISTS bookings
@@ -60,23 +76,6 @@ CREATE TABLE IF NOT EXISTS memberships
     FOREIGN KEY (rider) REFERENCES riders (fiscalCode) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
--- Table: horses
-CREATE TABLE IF NOT EXISTS horses
-(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    info TEXT NOT NULL
-);
-
--- Table: arenas
-CREATE TABLE IF NOT EXISTS arenas
-(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    available INTEGER NOT NULL CHECK(available IN (0, 1)) -- 0 = not available, 1 = available
-);
-
-
 -- Table: horsesBoxes
 CREATE TABLE IF NOT EXISTS horseBoxes
 (
@@ -84,6 +83,8 @@ CREATE TABLE IF NOT EXISTS horseBoxes
     horse INTEGER NOT NULL,
     FOREIGN KEY (horse) REFERENCES horses (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+
 
 
 

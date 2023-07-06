@@ -46,8 +46,8 @@ public class LessonsControllerTest {
             resultStringBuilder.append(line).append("\n");
         }
 
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
-        Statement stmt = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db").createStatement();
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
+        Statement stmt = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db").createStatement();
         stmt.executeUpdate(resultStringBuilder.toString());
 
         stmt.close();
@@ -56,24 +56,24 @@ public class LessonsControllerTest {
 
     @BeforeEach
     public void initDb() throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         lessonDAO = new LessonDAO(arenaDAO, riderDAO, trainerDAO);
 
         // Delete data from lessons table
-        List<String> tables = Arrays.asList("trainers", "lessons", "riders", "horses", "bookings", "arenas");
+        List<String> tables = Arrays.asList("trainers", "lessons", "riders","memberships","bookings", "horses","horseboxes", "arenas", "sqlite_sequence");
         for (String table : tables) connection.prepareStatement("DELETE FROM " + table).executeUpdate();
 
         // Reset autoincrement counters
         connection.prepareStatement("DELETE FROM sqlite_sequence").executeUpdate();
 
         //Insert some test data
-        connection.prepareStatement("INSERT INTO arenas (id, name, avaiable) VALUES (1, 'name1', true)").executeUpdate();
-        connection.prepareStatement("INSERT INTO arenas (id, name, avaiable) VALUES (2, 'name2', false)").executeUpdate();
+        connection.prepareStatement("INSERT INTO arenas (id, name, available) VALUES (1, 'name1', true)").executeUpdate();
+        connection.prepareStatement("INSERT INTO arenas (id, name, available) VALUES (2, 'name2', false)").executeUpdate();
         connection.prepareStatement("INSERT INTO trainers (fiscalCode, firstName, lastName) VALUES ('AAAAAA11', 'name1', 'surname1')").executeUpdate();
         connection.prepareStatement("INSERT INTO lessons (id, arena, trainer, date, time) VALUES (1, 1, 'AAAAAA11',  LocalDate.now(), LocalTime.now())").executeUpdate();
         connection.prepareStatement("INSERT INTO lessons (id, arena, trainer, date, time) VALUES (2, 1, 'AAAAAA11',  LocalDate.now(), LocalTime.now().plusHours(1))").executeUpdate();
 
-        connection.close();  //fixme va bene chiuderla dopo?
+        connection.close();
     }
 
     @Test
