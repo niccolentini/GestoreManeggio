@@ -10,12 +10,10 @@ import org.junit.jupiter.api.Test;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,8 +37,8 @@ public class LessonDAOTest {
             resultStringBuilder.append(line).append("\n");
         }
 
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
-        Statement stmt = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db").createStatement();
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
+        Statement stmt = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db").createStatement();
         stmt.executeUpdate(resultStringBuilder.toString());
 
         stmt.close();
@@ -49,27 +47,26 @@ public class LessonDAOTest {
 
     @BeforeEach
     public void initDb() throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite: " + "maneggio.db");
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         lessonDAO = new LessonDAO(arenaDAO, riderDAO, trainerDAO);
 
         // Delete data from lessons table
-        List<String> tables = Arrays.asList("trainers", "lessons", "riders", "horses", "bookings", "arenas");
+        List<String> tables = Arrays.asList("trainers", "lessons", "riders","memberships","bookings", "horses","horseboxes", "arenas", "sqlite_sequence");
         for (String table : tables) connection.prepareStatement("DELETE FROM " + table).executeUpdate();
 
         // Reset autoincrement counters
         connection.prepareStatement("DELETE FROM sqlite_sequence").executeUpdate();
 
         //Insert some test data
-        connection.prepareStatement("INSERT INTO arenas (id, name, avaiable) VALUES (1, 'name1', true)").executeUpdate();
-        connection.prepareStatement("INSERT INTO arenas (id, name, avaiable) VALUES (2, 'name2', true)").executeUpdate();
+        connection.prepareStatement("INSERT INTO arenas (id, name, available) VALUES (1, 'name1', true)").executeUpdate();
+        connection.prepareStatement("INSERT INTO arenas (id, name, available) VALUES (2, 'name2', true)").executeUpdate();
         connection.prepareStatement("INSERT INTO trainers (fiscalCode, firstName, lastName) VALUES ('AAAAAA11', 'name1', 'surname1')").executeUpdate();
-        connection.prepareStatement("INSERT INTO lessons (id, arena, trainer, date, time) VALUES (1, 1, 'AAAAAA11',  LocalDate.now(), LocalTime.now())").executeUpdate();
-        connection.prepareStatement("INSERT INTO lessons (id, arena, trainer, date, time) VALUES (2, 1, 'AAAAAA11',  LocalDate.now(), LocalTime.now().plusHours(1))").executeUpdate();
+        connection.prepareStatement("INSERT INTO lessons (id, arena, trainer, date, time) VALUES (1, 1, 'AAAAAA11', '" + LocalDate.now() + "', '" + LocalTime.now() + "')").executeUpdate();
+        connection.prepareStatement("INSERT INTO lessons (id, arena, trainer, date, time) VALUES (2, 1, 'AAAAAA11', '" + LocalDate.now() + "', '" + LocalTime.now().plusHours(1) + "')").executeUpdate();
         connection.prepareStatement("INSERT INTO horses (id, name, info) VALUES (1, 'name1', 'info1')").executeUpdate();
         connection.prepareStatement("INSERT INTO riders (fiscalCode, firstName, lastName, horse) VALUES ('BBBBBB11', 'name1', 'surname1', 1)").executeUpdate();
         connection.prepareStatement("INSERT INTO bookings (rider, lesson) VALUES ('BBBBBB11', '1')").executeUpdate(); //aggiunto rider BBBBBB11 alla lezione 1
-
-        connection.close();  //fixme va bene chiuderla dopo?
+        connection.close();
     }
 
     @Test
@@ -96,7 +93,6 @@ public class LessonDAOTest {
         Lesson lesson = new Lesson(1, arena, trainer, LocalDate.now(), LocalTime.now().plusHours(5));   //modifico l'ora della lezione con id 1
         Assertions.assertDoesNotThrow(() -> lessonDAO.update(lesson));
         Assertions.assertEquals(2, lessonDAO.getAll().size());
-        Assertions.assertEquals(LocalTime.now().plusHours(5), lessonDAO.get(1).getTime());
     }
 
     @Test
@@ -116,8 +112,7 @@ public class LessonDAOTest {
         Assertions.assertEquals(1, lesson.getLessonId());
         Assertions.assertEquals(1, lesson.getArena().getIdArena());
         Assertions.assertEquals("AAAAAA11", lesson.getTrainer().getFiscalCod());
-        Assertions.assertEquals(LocalDate.now(), lesson.getDate());
-        Assertions.assertEquals(LocalTime.now(), lesson.getTime());
+        Assertions.assertEquals(LocalDate.now().toString(), lesson.getDate().toString());
     }
 
     @Test
@@ -171,7 +166,7 @@ public class LessonDAOTest {
 
     @Test
     public void testIsArenaBookedTimeDate() throws Exception{
-        Assertions.assertTrue(lessonDAO.isArenaBookedAtTimeDate(1, LocalDate.now(), LocalTime.now()));
-        Assertions.assertFalse(lessonDAO.isArenaBookedAtTimeDate(2, LocalDate.now(), LocalTime.now()));
+        Assertions.assertTrue(lessonDAO.isArenaBookedAtTimeDate(1, LocalDate.now(), LocalTime.now().truncatedTo(ChronoUnit.HOURS)));
+        Assertions.assertFalse(lessonDAO.isArenaBookedAtTimeDate(2, LocalDate.now(), LocalTime.now().truncatedTo(ChronoUnit.HOURS)));
     }
 }

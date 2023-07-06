@@ -119,7 +119,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
         statement.setInt(1, lessonId);
         ResultSet resultSet = statement.executeQuery();
         ArrayList<Rider> riders = new ArrayList<>();
-        while (resultSet.next()) riders.add(riderDAO.get(resultSet.getString("fiscalCod")));
+        while (resultSet.next()) riders.add(riderDAO.get(resultSet.getString("rider")));
         resultSet.close();
         statement.close();
         connection.close();
@@ -133,7 +133,7 @@ public class LessonDAO implements DAO <Lesson, Integer> {
         statement.setString(1, fiscalCode);
         ResultSet resultSet = statement.executeQuery();
         ArrayList<Lesson> lessons = new ArrayList<>();
-        while (resultSet.next()) lessons.add(this.get(resultSet.getInt("lessonId")));
+        while (resultSet.next()) lessons.add(this.get(resultSet.getInt("lesson")));
         resultSet.close();
         statement.close();
         connection.close();
