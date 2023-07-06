@@ -83,8 +83,6 @@ public class LessonDAO implements DAO <Lesson, Integer> {
         }
     }
 
-
-
     @Override
     public Lesson get(Integer lessonId) throws Exception {
         Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
@@ -109,7 +107,6 @@ public class LessonDAO implements DAO <Lesson, Integer> {
 
     }
 
-
     @Override
     public ArrayList<Lesson> getAll() throws Exception{
         Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
@@ -130,7 +127,6 @@ public class LessonDAO implements DAO <Lesson, Integer> {
         connection.close();
         return lessons;
     }
-
 
     public ArrayList<Rider> getRidersForLesson(Integer lessonId) throws Exception {
 
@@ -161,16 +157,49 @@ public class LessonDAO implements DAO <Lesson, Integer> {
         return lessons;
     }
 
-    public void addRiderToLesson(String fiscalCode, Integer lessonId) throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
-        String query = "INSERT OR IGNORE INTO bookings (lesson, rider) VALUES (?, ?)";
-        PreparedStatement statement = connection.prepareStatement(query);
-        statement.setInt(1, lessonId);
-        statement.setString(2, fiscalCode);
-        statement.executeUpdate();
-        statement.close();
-        connection.close();
+    public void addRiderToLesson(String fiscalCode, Integer lessonId) throws Exception, SQLException {
+        Connection connection = null;
+        PreparedStatement selectStatement = null;
+
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
+
+            // Verifica se l'ID della lezione esiste nel database
+            selectStatement = connection.prepareStatement("SELECT id FROM lessons WHERE id = ?");
+            selectStatement.setInt(1, lessonId);
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            if (!resultSet.next()) {
+                throw new Exception("Lesson not found with ID: " + lessonId);
+            }
+
+            // Verifica se il rider è già presente nella lezione
+            selectStatement = connection.prepareStatement("SELECT rider FROM bookings WHERE lesson = ? AND rider = ?");
+            selectStatement.setInt(1, lessonId);
+            selectStatement.setString(2, fiscalCode);
+            resultSet = selectStatement.executeQuery();
+
+            if (resultSet.next()) {
+                throw new Exception("Rider already exists in the lesson: " + fiscalCode);
+            }
+
+            // Procedi con l'inserimento del rider nella lezione
+            PreparedStatement insertStatement = connection.prepareStatement("INSERT INTO bookings (lesson, rider) VALUES (?, ?)");
+            insertStatement.setInt(1, lessonId);
+            insertStatement.setString(2, fiscalCode);
+            insertStatement.executeUpdate();
+            insertStatement.close();
+        } finally {
+            // Chiudi le risorse
+            if (selectStatement != null) {
+                selectStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
     }
+
 
     public boolean removeRiderFromLesson(String fiscalCode, Integer lessonId) throws Exception {
         Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
