@@ -54,14 +54,35 @@ public class LessonDAO implements DAO <Lesson, Integer> {
 
 
     @Override
-    public void remove(Integer lessonId) throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
-        PreparedStatement statement = connection.prepareStatement("DELETE FROM lessons WHERE id = ?");
-        statement.setInt(1, lessonId);
-        statement.executeUpdate();
-        statement.close();
-        connection.close();
+    public void remove(Integer lessonId) throws Exception, SQLException {
+        Connection connection = null;
+        PreparedStatement selectStatement = null;
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
+            selectStatement = connection.prepareStatement("SELECT id FROM lessons WHERE id = ?");
+            selectStatement.setInt(1, lessonId);
+            ResultSet resultSet = selectStatement.executeQuery();
+
+            // Verifica se il lessonId esiste
+            if (!resultSet.next()) {
+                throw new Exception("Lesson not found: " + lessonId);
+            }
+
+            // Procedi con la rimozione della lezione
+            PreparedStatement deleteStatement = connection.prepareStatement("DELETE FROM lessons WHERE id = ?");
+            deleteStatement.setInt(1, lessonId);
+            deleteStatement.executeUpdate();
+            deleteStatement.close();
+        } finally {
+            if (selectStatement != null) {
+                selectStatement.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        }
     }
+
 
 
     @Override

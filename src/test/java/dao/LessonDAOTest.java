@@ -166,7 +166,7 @@ public class LessonDAOTest {
 
     @Test
     public void testIsArenaBookedTimeDate() throws Exception{
-        Assertions.assertTrue(lessonDAO.isArenaBookedAtTimeDate(1, LocalDate.now(), LocalTime.now().truncatedTo(ChronoUnit.HOURS)));
+        Assertions.assertTrue(lessonDAO.isArenaBookedAtTimeDate(1, LocalDate.of(2023, 7, 1), LocalTime.of(9, 00)));
         Assertions.assertFalse(lessonDAO.isArenaBookedAtTimeDate(2, LocalDate.now(), LocalTime.now().truncatedTo(ChronoUnit.HOURS)));
     }
 }
