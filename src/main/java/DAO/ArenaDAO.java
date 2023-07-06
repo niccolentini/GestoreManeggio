@@ -14,7 +14,7 @@ public class ArenaDAO implements DAO <Arena, Integer> {
         PreparedStatement ps = connection.prepareStatement("INSERT INTO arenas (name, available) VALUES (?, ?)");
         //id is auto-incremented, so it's not needed
         ps.setString(1, arena.getName());
-        ps.setString(2, "TRUE");
+        ps.setInt(2, 1);
         ps.executeUpdate();
         ps.close();
         connection.close();
@@ -23,9 +23,10 @@ public class ArenaDAO implements DAO <Arena, Integer> {
     @Override
     public void update(Arena arena) throws Exception {
         Connection connection= DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
-        PreparedStatement ps = connection.prepareStatement("UPDATE arenas SET name = ? WHERE id = ?");
+        PreparedStatement ps = connection.prepareStatement("UPDATE arenas SET name = ?, available = ? WHERE id = ?");
         ps.setString(1, arena.getName());
-        ps.setInt(2, arena.getIdArena());
+        ps.setInt(2, arena.isAvailable());
+        ps.setInt(3, arena.getIdArena());
         ps.executeUpdate();
         ps.close();
         connection.close();
@@ -51,9 +52,8 @@ public class ArenaDAO implements DAO <Arena, Integer> {
         ResultSet rs = ps.executeQuery();
         if(rs.next())
         {
-            arena = new Arena(
-                    rs.getString("name"),
-                    id);
+            arena = new Arena(rs.getString("name"), id);
+            arena.setAvailable(rs.getInt("available"));
         }
         rs.close();
         ps.close();

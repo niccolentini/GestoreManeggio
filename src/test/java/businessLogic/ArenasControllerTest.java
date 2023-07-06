@@ -2,6 +2,7 @@ package test.java.businessLogic;
 
 import main.java.BusinessLogic.ArenasController;
 import main.java.DAO.*;
+import main.java.DomainModel.Arena;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +50,7 @@ public class ArenasControllerTest {
         Connection connection = DriverManager.getConnection("jdbc:sqlite:maneggio.db");
 
         // Delete data from lessons table
-        List<String> tables = Arrays.asList("trainers", "lessons", "riders", "horses", "bookings");
+        List<String> tables = Arrays.asList("trainers", "lessons", "riders","memberships","bookings", "horses","horseboxes", "arenas", "sqlite_sequence");
         for (String table : tables) {
             connection.prepareStatement("DELETE FROM " + table).executeUpdate();
         }
@@ -94,7 +95,8 @@ public class ArenasControllerTest {
     @Test
     public void testDisableArenaSuccess() throws Exception{
         arenasController.disableArena(1);
-        Assertions.assertNotEquals(1, arenaDAO.get(1).isAvailable());
+        Arena a = arenaDAO.get(1);
+        Assertions.assertEquals(0, arenaDAO.get(1).isAvailable());
     }
 
     @Test

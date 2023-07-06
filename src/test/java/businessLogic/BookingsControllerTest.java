@@ -44,7 +44,7 @@ class BookingsControllerTest {
         }
         Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
         Statement stmt = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db").createStatement();
-        int row = stmt.executeUpdate(resultStringBuilder.toString()); //fixme qui dà errore "near horse" se lo levi ti dà errore su trainers
+        int row = stmt.executeUpdate(resultStringBuilder.toString());
         stmt.close();
         connection.close();
 
