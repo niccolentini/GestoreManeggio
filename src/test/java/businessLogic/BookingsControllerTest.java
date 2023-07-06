@@ -112,7 +112,7 @@ class BookingsControllerTest {
         this.trainersController = new TrainersController(trainerDAO);
         this.arenasController = new ArenasController(arenaDAO, lessonDAO);
         this.lessonsController = new LessonsController(lessonDAO, trainersController, arenasController);
-        this.ridersController = new RidersController(riderDAO);
+        this.ridersController = new RidersController(riderDAO, membershipDAO);
         this.bookingsController = new BookingsController(lessonDAO, lessonsController, ridersController , membershipDAO);
 
         // create test data
@@ -129,9 +129,9 @@ class BookingsControllerTest {
         horseDAO.add(testHorse3);
         horseDAO.add(testHorse4);
         ridersController.addRider("PEPPEP12", "Peppe", "Peppe", testHorse1, 1);
-        ridersController.addRider("MARPOI11", "Marco", "Poi", testHorse2, 2);
-        ridersController.addRider("REIEII33", "Renzo", "Verza", testHorse3, 3);
-        ridersController.addRider("GIOGIO44", "Giorgio", "Giorgio", testHorse4, 4);
+        ridersController.addRider("MARPOI11", "Marco", "Poi", testHorse2, 1);
+        ridersController.addRider("REIEII33", "Renzo", "Verza", testHorse3, 1);
+        ridersController.addRider("GIOGIO44", "Giorgio", "Giorgio", testHorse4, 1);
         trainersController.addTrainer("LUCPAL22", "Luca", "Paoli");
         arenasController.addArena("Dante");
         arenasController.addArena("Alighieri");

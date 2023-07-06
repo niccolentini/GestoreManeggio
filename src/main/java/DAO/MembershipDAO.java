@@ -43,7 +43,7 @@ public class MembershipDAO {
 
     public void update(String fiscalCode, Membership membership) throws SQLException {
         Connection connection = DriverManager.getConnection("jdbc:sqlite:" + "maneggio.db");
-        PreparedStatement updateMembership = connection.prepareStatement("UPDATE memberships SET numLessons WHERE rider = ?");
+        PreparedStatement updateMembership = connection.prepareStatement("UPDATE memberships SET numLessons = ? WHERE rider = ?");
         updateMembership.setInt(1, membership.getNumLessons());
         updateMembership.setString(2, fiscalCode);
         updateMembership.executeUpdate();

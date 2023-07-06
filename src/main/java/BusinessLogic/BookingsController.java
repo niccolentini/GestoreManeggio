@@ -3,6 +3,7 @@ package main.java.BusinessLogic;
 import main.java.DAO.LessonDAO;
 import main.java.DAO.MembershipDAO;
 import main.java.DomainModel.*;
+import main.java.DomainModel.Membership.Membership;
 
 import java.util.ArrayList;
 
@@ -29,8 +30,11 @@ public class BookingsController{
             if (lesson.getDate().equals(l.getDate()) && lesson.getTime().equals(l.getTime()))
                 throw new RuntimeException("Il rider è già iscritto ad un'altra lezione in questo orario");
         });
-
-        int numLess = r.getMembership().getNumLessons();  //numero restanti di lezioni nel pacchetto
+        if(lessonDAO.getRidersForLesson(lessonId).size() > 2){
+            throw new RuntimeException("Prenotazione non andata a buon fine. Sono state raggiunte le prenotazioni massime per questa lezione");
+        }
+        Membership m = membershipDAO.get(riderFiscalCode);
+        int numLess = m.getNumLessons();
         if (numLess > 0){
             if ( l.getNumRider() == l.getMaxRiders())
                 throw new RuntimeException("Prenotazione non andata a buon fine. Sono state raggiunte le prenotazioni massime per questa lezione");
@@ -38,8 +42,8 @@ public class BookingsController{
             ArrayList<Rider> riders = lessonDAO.getRidersForLesson(lessonId);
             if (riders.contains(r))
                 throw new RuntimeException("Il rider è già iscritto a questa lezione");
-            r.getMembership().setNumLessons(numLess - 1);
-            membershipDAO.update(riderFiscalCode, r.getMembership());
+            m.setNumLessons(numLess - 1);
+            membershipDAO.update(riderFiscalCode, m);
             lessonDAO.addRiderToLesson(riderFiscalCode, lessonId);
         }
         else throw new RuntimeException("Prenotazione non andata a buon fine. Il rider non ha più lezioni disponibili nel proprio pacchetto lezioni");
